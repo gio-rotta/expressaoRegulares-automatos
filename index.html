@@ -1,0 +1,222 @@
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<link href="vendor/bootstrap.css" rel="stylesheet">
+	</head>
+	<style>
+		body {
+			padding: 10px;
+		}
+
+		.panel-body, body {
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+		}
+
+		.main-panel {
+			display: flex;
+		}
+
+		.panel {
+			margin-top: 10px;
+			flex-grow: 1;
+		}
+
+		.title {
+			padding: 0 10px;
+		}
+
+		.flex {
+			display: flex;
+			flex-grow: 1;
+		}
+
+		.er-validador {
+			height: 20px;
+		}
+
+		.tabela-automato {
+			width: 100%;
+			text-align: center;
+		}
+
+		.tabela-automato th {
+			padding: 10px;
+			background-color: #ccc;
+			text-align: center;
+		}
+
+		.tabela-automato td {
+			padding: 5px;
+			text-align: center;
+		}
+
+		.tabela-automato tr:nth-child(odd) {
+			background-color: #eee;
+		}
+
+		.coluna-nome {
+			text-align: left !important;
+		}
+
+		#grafo-automato-1 {
+		   max-width: 500px;
+		   height: 300px;
+		   margin: auto;
+		}
+	</style>
+	<body class="trabalho">
+		<ul class="nav nav-tabs">
+			<li><h4 class="title">Trabalho 1 - Manipulação Automâto Finito & Expressão Regular</h4></li>
+			<li role="presentation" data-tab="op-panel" class="js-tab pull-right"><a href="#">Operações</a></li>
+			<li role="presentation" data-tab="af-panel" class="js-tab pull-right"><a href="#">Automâtos Finitos</a></li>
+			<li role="presentation" data-tab="er-panel" class="js-tab active pull-right"><a href="#">Expressões Regulares</a></li>
+		</ul>
+		<div class="flex">
+			<div class="panel panel-default main-panel js-er-panel">
+			  <div class="panel-body">
+			  	<div class="row">
+			  		<div class="form-group col-md-12">
+					  	<label for="id_username" class="control-label requiredField">Expressão Regular:</label>
+					    <div class="input-group">
+						  <input type="text" class="js-er-input form-control">
+						  <div class="input-group-btn">
+						    <div class="btn btn-primary">Upload</div>
+						    <div class="btn btn-success js-save-er disabled">Save</div>
+						  </div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12 er-validador"></div>
+				</div>
+				<div class="row">
+					<div class="col-md-4"></div>
+					<div class="col-md-4">
+						<div class="btn btn-primary js-deSimone">Converter para Automâto Finito usando algoritmo de De Simone</div>
+					</div>
+					<div class="col-md-4"></div>
+				</div>
+				<div class="row flex">
+						<div class="col-md-6 flex">
+					  		<div class="panel panel-default">
+					  			<div class="panel-heading">Tabela Autômato</div>
+					  			<div class="panel-body panel-automato"></div>
+							</div>
+						</div>
+						<div class="col-md-6 flex">
+					  		<div class="panel panel-default">
+					  			<div class="panel-heading">Autômato Finito</div>
+					  			<div class="panel-body" id="grafo-automato-1"></div>
+							</div>
+						</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="btn btn-danger pull-right">Salvar Automâto Finito</div>
+					</div>
+				</div>
+			  </div>
+			</div>
+			<div class="panel panel-default main-panel js-af-panel hidden">
+			  <div class="panel-body">
+			  		<div class="form-group ">
+					  	<div class="btn btn-success ">Novo Automâto Finito</div>
+					  	<div class="btn btn-primary ">Carregar Automâto Finito</div>
+						<div class="btn btn-info disabled">Determinização Automâto</div>
+					  	<div class="btn btn-info disabled">Minimizar Automâto</div>
+					  	<div class="btn btn-danger disabled">Salvar Automâto Finito</div>
+					</div>
+					<div class="row flex">
+						<div class="col-md-6 flex">
+					  		<div class="panel panel-default">
+					  			<div class="panel-heading">Tabela Autômato
+					  				<div class="form-group pull-right">
+					  					Terminal:
+					  					<div class="btn btn-primary btn-sm "><span class="glyphicon glyphicon-plus"></span></div>
+					  					<div class="btn btn-primary btn-sm "><span class="glyphicon glyphicon-minus"></span></div>
+					  					Estado:
+					  					<div class="btn btn-warning btn-sm "><span class="glyphicon glyphicon-plus"></span></div>
+					  					<div class="btn btn-warning btn-sm "><span class="glyphicon glyphicon-minus"></span></div>
+					  				</div>
+					  			</div>
+					  			<div class="panel-body"></div>
+							</div>
+						</div>
+						<div class="col-md-6 flex">
+					  		<div class="panel panel-default">
+					  			<div class="panel-heading">Autômato Finito</div>
+					  			<div class="panel-body"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="panel panel-default main-panel js-operation-panel hidden">
+			  <div class="panel-body">
+			  	<div class="row">
+			  		<div class="form-group col-md-12">
+					  	<label for="id_username" class="control-label requiredField">Expressão Regular:</label>
+					    <div class="input-group">
+						  <input type="text" class="js-er-input form-control">
+						  <div class="input-group-btn">
+						    <div class="btn btn-primary">Upload</div>
+						    <div class="btn btn-success disabled">Save</div>
+						  </div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="er-validador"></div>
+				</div>
+				<div class="row">
+					<div class="col-md-4"></div>
+					<div class="col-md-4">
+						<div class="btn btn-primary">Converter para Automâto Finito usando algoritmo de De Simone</div>
+					</div>
+					<div class="col-md-4"></div>
+				</div>
+				<div class="row flex">
+						<div class="col-md-6 flex">
+					  		<div class="panel panel-default">
+					  			<div class="panel-heading">Tabela Autômato</div>
+					  			<div class="panel-body"></div>
+							</div>
+						</div>
+						<div class="col-md-6 flex">
+					  		<div class="panel panel-default">
+					  			<div class="panel-heading">Autômato Finito</div>
+					  			<div class="panel-body"></div>
+							</div>
+						</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="btn btn-danger pull-right">Salvar Automâto Finito</div>
+					</div>
+				</div>
+			  </div>
+			</div>
+		</div>
+		<!-- Vendor -->
+		<script src="vendor/jquery-1.12.3.min.js"></script>
+		<script src="vendor/bootstrap.min.js"></script>
+		<script src="vendor/underscore.min.js"></script>
+		<script src="vendor/backbone-min.js"></script>
+		<script src="vendor/xregex-all.js"></script>
+		<script src="vendor/sigma.min.js"></script>
+		<script src="vendor/plugins/sigma.renderers.edgeLabels.min.js"></script>
+		<script src="vendor/plugins/sigma.renderers.customEdgeShapes.min.js"></script>
+		<script src="vendor/plugins/sigma.renderers.customShapes.min.js"></script>
+		<!-- Formais -->
+		<script src="Grafo.class.js"></script>
+		<script src="ExpressaoRegular.class.js"></script>
+		<script src="DeSimone.class.js"></script>
+		<!-- Views -->
+		<script src="view/t1.view.js"></script>
+		<script type="text/javascript">
+				var t1View = new TrabalhoView();
+	    </script>
+	</body>
+</html>
