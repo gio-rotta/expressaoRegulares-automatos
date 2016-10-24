@@ -60,11 +60,26 @@
 			text-align: left !important;
 		}
 
-		#grafo-automato-1 {
+		.coluna-inicio, .coluna-final {
+			width: 10%; 
+			text-align: center !important;
+		}
+
+		#grafo-automato-1, #grafo-automato-2 {
 		   max-width: 500px;
 		   height: 300px;
 		   margin: auto;
 		}
+
+		input[type=file] {
+			width: 0.1px;
+			height: 0.1px;
+			opacity: 0;
+			overflow: hidden;
+			position: absolute;
+			z-index: -1;
+		}
+
 	</style>
 	<body class="trabalho">
 		<ul class="nav nav-tabs">
@@ -74,6 +89,7 @@
 			<li role="presentation" data-tab="er-panel" class="js-tab active pull-right"><a href="#">Expressões Regulares</a></li>
 		</ul>
 		<div class="flex">
+
 			<div class="panel panel-default main-panel js-er-panel">
 			  <div class="panel-body">
 			  	<div class="row">
@@ -82,8 +98,9 @@
 					    <div class="input-group">
 						  <input type="text" class="js-er-input form-control">
 						  <div class="input-group-btn">
-						    <div class="btn btn-primary">Upload</div>
-						    <div class="btn btn-success js-save-er disabled">Save</div>
+						    <input class="js-regex-inputfile" type="file" name="file-regex" id="file-regex" />
+							<label class="btn btn-primary" for="file-regex">Upload</label>
+						    <div class="btn btn-success js-abrir-modal-regex js-save-er disabled">Save</div>
 						  </div>
 						</div>
 					</div>
@@ -114,45 +131,48 @@
 				</div>
 				<div class="row">
 					<div class="col-md-12">
-						<div class="btn btn-danger pull-right">Salvar Automâto Finito</div>
+						<div class="btn btn-danger js-abrir-modal-automato pull-right">Salvar Automâto Finito</div>
 					</div>
 				</div>
 			  </div>
 			</div>
+
 			<div class="panel panel-default main-panel js-af-panel hidden">
 			  <div class="panel-body">
 			  		<div class="form-group ">
 					  	<div class="btn btn-success ">Novo Automâto Finito</div>
-					  	<div class="btn btn-primary ">Carregar Automâto Finito</div>
+					  	<input class="js-automato-inputfile" type="file" name="file-automato" id="file-automato" />
+						<label class="btn btn-primary" for="file-automato">Carregar Automâto Finito</label>
 						<div class="btn btn-info disabled">Determinização Automâto</div>
 					  	<div class="btn btn-info disabled">Minimizar Automâto</div>
 					  	<div class="btn btn-danger disabled">Salvar Automâto Finito</div>
 					</div>
 					<div class="row flex">
-						<div class="col-md-6 flex">
+						<div class="col-md-8 flex">
 					  		<div class="panel panel-default">
 					  			<div class="panel-heading">Tabela Autômato
 					  				<div class="form-group pull-right">
 					  					Terminal:
-					  					<div class="btn btn-primary btn-sm "><span class="glyphicon glyphicon-plus"></span></div>
-					  					<div class="btn btn-primary btn-sm "><span class="glyphicon glyphicon-minus"></span></div>
+					  					<div class="btn btn-primary btn-sm js-adc-terminal "><span class="glyphicon glyphicon-plus"></span></div>
+					  					<div class="btn btn-primary btn-sm js-rm-terminal "><span class="glyphicon glyphicon-minus"></span></div>
 					  					Estado:
-					  					<div class="btn btn-warning btn-sm "><span class="glyphicon glyphicon-plus"></span></div>
-					  					<div class="btn btn-warning btn-sm "><span class="glyphicon glyphicon-minus"></span></div>
+					  					<div class="btn btn-warning btn-sm js-adc-estado"><span class="glyphicon glyphicon-plus"></span></div>
+					  					<div class="btn btn-warning btn-sm js-rm-estado"><span class="glyphicon glyphicon-minus"></span></div>
 					  				</div>
 					  			</div>
-					  			<div class="panel-body"></div>
+					  			<div class="panel-body panel-automato"></div>
 							</div>
 						</div>
-						<div class="col-md-6 flex">
+						<div class="col-md-4 flex">
 					  		<div class="panel panel-default">
 					  			<div class="panel-heading">Autômato Finito</div>
-					  			<div class="panel-body"></div>
+					  			<div class="panel-body" id="grafo-automato-2"></div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
+
 			<div class="panel panel-default main-panel js-operation-panel hidden">
 			  <div class="panel-body">
 			  	<div class="row">
@@ -199,6 +219,47 @@
 			  </div>
 			</div>
 		</div>
+
+		<div class="modal fade" id="saveAutomatoModal" tabindex="-1" role="dialog">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h4 class="modal-title">Deseja salvar o automato?</h4>
+		      </div>
+		      <div class="modal-body">
+				  	<label for="salvar" class="control-label requiredField">Escolha o nome do automato:</label>
+				    <div class="input-group col-md-12">
+					  <input type="text" class="js-nome-automato form-control">
+					</div>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn js-abrir-modal-automato btn-default" data-dismiss="modal">Fechar</button>
+		        <button type="button" class="btn js-salvar-automato btn-primary">Salvar</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+
+		<div class="modal fade" id="saveRegexModal" tabindex="-1" role="dialog">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h4 class="modal-title">Deseja salvar a expressão regular?</h4>
+		      </div>
+		      <div class="modal-body">
+				  	<label for="salvar" class="control-label requiredField">Escolha o nome da expressão regular:</label>
+				    <div class="input-group col-md-12">
+					  <input type="text" class="js-nome-regex form-control">
+					</div>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn js-fechar-modal-regex btn-default" data-dismiss="modal">Fechar</button>
+		        <button type="button" class="btn js-salvar-regex btn-primary">Salvar</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+
 		<!-- Vendor -->
 		<script src="vendor/jquery-1.12.3.min.js"></script>
 		<script src="vendor/bootstrap.min.js"></script>

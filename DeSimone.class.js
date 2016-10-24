@@ -215,10 +215,11 @@ function DeSimone (expressao) {
 				this._estadosAutomato[estado].transicoes[letra] = nomeEstado;
 				this._estadosAutomato['q'+this._contadorEstados] = {
 					nome: nomeEstado,
+					id: nomeEstado,
 					originado: _.uniq(folhasDaLetra),
 					inicial: false,
 					final: false,
-					transicoes : []
+					transicoes : {}
 				};
 				this._contadorEstados++;
 			}
