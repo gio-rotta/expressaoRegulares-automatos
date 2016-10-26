@@ -227,7 +227,9 @@ var AutomatoView = Backbone.View.extend({
     },
 
     novoEstado: function(event) {
-      console.log(this.indexEstado)
+      if( isNaN(this.indexEstado) ) {
+        this.indexEstado = 10;
+      }
       var index = ++this.indexEstado;
       var nome = 'q'+index;
       this.estados[nome] = {

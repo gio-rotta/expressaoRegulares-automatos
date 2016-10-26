@@ -15,12 +15,13 @@ var AutomatoPanelView = Backbone.View.extend({
     "click .js-novo-automato": "novoAutomato",
     "click .js-abrir-modal-automato" : "abrirModalSalvarAutomato",
     "click .js-fechar-modal-automato" : "fecharModalAutomato",
+    "click .js-minimizar" : "minimizarAutomato"
   },
   
   initialize: function(options) {
     this.expressaoRegular = new ExpressaoRegular();
     this.expressao = '';
-    this.automato = '';
+    this.automato = {};
     this.automatoView = false;
     this.on('new', this.habilitarBotoes);
   },  
@@ -31,6 +32,17 @@ var AutomatoPanelView = Backbone.View.extend({
       this.$('.js-minimizar').toggleClass('disabled', false);
       this.$('.js-abrir-modal-automato').toggleClass('disabled', false);
     }
+  },
+
+  minimizarAutomato: function(event) {
+    console.log(this.automato)
+    var minimizadorAutomato = new Minimizacao(this.automato.estados, this.automato.alfabeto);
+    var estados = minimizadorAutomato.minimizarAutomato();
+    this.automato = {estados:estados, alfabeto:this.automato.alfabeto, elGrafo:'grafo-automato-2'};
+    this.automatoView = new AutomatoView(this.automato);
+    this.automatoView.gerarTabelaDinamica();
+    this.$el.find('.panel-automato').html(this.automatoView.el);
+    this.automatoView.gerarGrafo();
   },
 
   automatoSelecionado: function(event) {
@@ -45,8 +57,8 @@ var AutomatoPanelView = Backbone.View.extend({
         if (!fileData.isAutomato) {
           alert('Arquivo especificado não representa um automâto')
         } else {
-          this.automato = fileData;
-          this.automatoView = new AutomatoView({estados:this.automato.estados, alfabeto:this.automato.alfabeto, elGrafo:'grafo-automato-2'});
+          this.automato = {estados:fileData.estados, alfabeto:fileData.alfabeto, elGrafo:'grafo-automato-2'};
+          this.automatoView = new AutomatoView(this.automato);
           this.automatoView.gerarTabelaDinamica();
           this.$el.find('.panel-automato').html(this.automatoView.el);
           this.automatoView.gerarGrafo();
@@ -64,7 +76,8 @@ var AutomatoPanelView = Backbone.View.extend({
     if (!this.automatoView) {
       var estados = {};
       estados['q0'] = { nome: 'q0', id:'q0', inicial: true, final:true, transicoes : {a:'q0'}, }
-      this.automatoView = new AutomatoView({estados:estados, alfabeto:['a'], elGrafo:'grafo-automato-2'});
+      this.automato = {estados:estados, alfabeto:['a'], elGrafo:'grafo-automato-2'};
+      this.automatoView = new AutomatoView(this.automato);
       this.automatoView.gerarTabelaDinamica();
       this.$el.find('.panel-automato').html(this.automatoView.el);
       this.automatoView.gerarGrafo();
@@ -79,7 +92,7 @@ var AutomatoPanelView = Backbone.View.extend({
   salvarAutomato: function(event) {
     // serialize JSON directly to a file
     var name = $('.js-nome-automato').val();
-    this.download(name+'.json', JSON.stringify(this.automato));
+    this.download(name+'.json', JSON.stringify({isAutomato:true, estados:this.automatoView.estados, alfabeto:this.automatoView.alfabeto}));
     $(document.body).append(this.$('#saveAutomatoModal').modal('hide'));
   },
 

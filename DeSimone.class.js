@@ -30,11 +30,6 @@ function DeSimone (expressao) {
 			valueNames: [null, null, 'value', null],
 		});
 
-		// for (var i; i < subexpEntreParenteses.length; i++) {
-			// subexpEntreParentesesparcial = [];
-			// subexpEntreParenteses[i]
-		// }
-
 		while(subexpEntreParenteses.length > 0) {
 			var obj = subexpEntreParenteses[0];
 			expressao = spliceSlice(expressao, obj.start - 1, obj.end + 1, this._contadorDeSimbolos);
