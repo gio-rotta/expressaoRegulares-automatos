@@ -7,6 +7,11 @@ function Minimizacao(estados, alfabeto) {
     this._listaDeLetras = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','X','W','Y','Z'];
 
 	this.minimizarAutomato = function() {
+		var ehDeterministico = this.verificarDeterminismo();
+		if (!ehDeterministico) {
+			alert('Não é possível minimizar um autômato não determinístico!');
+			return this._estados;
+		}
 		this.eliminarEstadosInacessíveis();
 		this.eliminarEstadosMortos();
 		this.eliminarIndefinicoes();
@@ -15,7 +20,22 @@ function Minimizacao(estados, alfabeto) {
 	}
 
 	this.verificarDeterminismo = function() {
-		
+		var ehDeterministico = true;
+		for (var estado in this._estados) {
+			var estado = this._estados[estado];
+
+			for (var terminal in estado.transicoes) {
+				var transicoes = estado.transicoes[terminal];
+				
+				if (transicoes.length > 1) {
+					ehDeterministico = false;
+				}
+
+			}
+
+		}
+
+		return ehDeterministico;
 	}
 
 	this.eliminarEstadosInacessíveis = function() {

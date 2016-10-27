@@ -58,7 +58,7 @@ var AutomatoView = Backbone.View.extend({
 
   gerarLinhas: function() {
     var linhas;
-    console.log(this.estados)
+
     for (var estado in this.estados) {
       estado = this.estados[estado];
       var inicial = (estado.inicial)? '->' : '';
@@ -83,7 +83,7 @@ var AutomatoView = Backbone.View.extend({
       var final = (estado.final)? 'checked' : '';
       var celulas = '<td class="coluna-nome coluna-inicio" ><input type="radio" class="js-radio-inicial" value="'+estado.id+'" name="inicial" '+inicial+'></td>';
       celulas += '<td class="coluna-nome coluna-final" ><input type="checkbox"  class="js-checkbox-final" value="'+estado.id+'" name="final" '+final+'></td>';
-      celulas += '<td class="coluna-nome" ><input data-target="'+estado.id+'" type="text" class="js-input-nome-estado" style="width:50px;" value='+estado.nome+'></td>';
+      celulas += '<td class="coluna-nome" ><input data-target="'+estado.id+'" type="text" class="js-input-nome-estado" style="width:75px;" value='+estado.nome+'></td>';
       
       for (var terminal in estado.transicoes) {
         var transicoes = estado.transicoes[terminal];
@@ -232,11 +232,10 @@ var AutomatoView = Backbone.View.extend({
   novaTransicao: function(event) {
     var estado = $(event.currentTarget).data('estado');
     var terminal = $(event.currentTarget).data('terminal');
-    console.log(estado, terminal)
-    console.log()
+
     var numeroTransicoes = Object.keys(this.estados[estado].transicoes[terminal]).length;
     this.estados[estado].transicoes[terminal][numeroTransicoes] = false;
-    console.log(this.estados[estado].transicoes[terminal])
+
 
     this.gerarTabelaDinamica();
     this.gerarGrafo();
@@ -355,8 +354,8 @@ var AutomatoView = Backbone.View.extend({
     var contador = 1;
 
     for (var estado in this.estados) {
-      var coluna = contador % this.alfabeto.length;
-      var linha = this.alfabeto.length / contador ;
+      var coluna = contador % Math.max(this.alfabeto.length, 4);
+      var linha =  contador/Math.max(this.alfabeto.length, 4);
       contador++;
       estado = this.estados[estado];
       var inicial = (estado.inicial)? '->' : '';
@@ -366,7 +365,7 @@ var AutomatoView = Backbone.View.extend({
       
       for (var terminal in estado.transicoes) {
         transicoes = estado.transicoes[terminal];
-      
+
         for (var transicaoIndex in transicoes) {
           transicao = transicoes[transicaoIndex];
           if (transicao) {
@@ -401,8 +400,6 @@ var AutomatoView = Backbone.View.extend({
       context.strokeStyle = node.borderColor || '#fff';
       context.stroke();
     };
-
-    console.log({ nodes: nodes , edges: edges })
 
     s = new sigma({
       settings: {

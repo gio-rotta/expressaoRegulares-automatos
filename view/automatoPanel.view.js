@@ -15,7 +15,8 @@ var AutomatoPanelView = Backbone.View.extend({
     "click .js-novo-automato": "novoAutomato",
     "click .js-abrir-modal-automato" : "abrirModalSalvarAutomato",
     "click .js-fechar-modal-automato" : "fecharModalAutomato",
-    "click .js-minimizar" : "minimizarAutomato"
+    "click .js-minimizar" : "minimizarAutomato",
+    "click .js-determinizar" : "determinizarAutomato"
   },
   
   initialize: function(options) {
@@ -28,16 +29,25 @@ var AutomatoPanelView = Backbone.View.extend({
 
   habilitarBotoes: function() {
     if (this.automatoView) {
-      this.$('.js-determinar').toggleClass('disabled', false);
+      this.$('.js-determinizar').toggleClass('disabled', false);
       this.$('.js-minimizar').toggleClass('disabled', false);
       this.$('.js-abrir-modal-automato').toggleClass('disabled', false);
     }
   },
 
   minimizarAutomato: function(event) {
-    console.log(this.automato)
     var minimizadorAutomato = new Minimizacao(this.automato.estados, this.automato.alfabeto);
     var estados = minimizadorAutomato.minimizarAutomato();
+    this.automato = {estados:estados, alfabeto:this.automato.alfabeto, elGrafo:'grafo-automato-2'};
+    this.automatoView = new AutomatoView(this.automato);
+    this.automatoView.gerarTabelaDinamica();
+    this.$el.find('.panel-automato').html(this.automatoView.el);
+    this.automatoView.gerarGrafo();
+  },
+
+  determinizarAutomato: function(event) {
+    var determinizadorAutomato = new Determinizacao(this.automato.estados, this.automato.alfabeto);
+    var estados = determinizadorAutomato.determinizarAutomato();
     this.automato = {estados:estados, alfabeto:this.automato.alfabeto, elGrafo:'grafo-automato-2'};
     this.automatoView = new AutomatoView(this.automato);
     this.automatoView.gerarTabelaDinamica();
@@ -80,8 +90,8 @@ var AutomatoPanelView = Backbone.View.extend({
       this.automatoView = new AutomatoView(this.automato);
       this.automatoView.gerarTabelaDinamica();
       this.$el.find('.panel-automato').html(this.automatoView.el);
-      this.automatoView.gerarGrafo();
       this.trigger("new", {});
+      this.automatoView.gerarGrafo();
     }
   },
 
