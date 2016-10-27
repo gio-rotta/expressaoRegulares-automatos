@@ -194,7 +194,8 @@ function DeSimone (expressao) {
 		// Para cada letra do afabeto, verifica quais folhas são correspondentes
 		for (var l = 0; l < this._alfabeto.length; l++) {
 			letra = this._alfabeto[l]
-			this._estadosAutomato[estado].transicoes[letra] = false;
+			this._estadosAutomato[estado].transicoes[letra] = [];
+			this._estadosAutomato[estado].transicoes[letra].push(false);
 			var folhasDaLetra = [];
 			var final = false;
 			for (var f = 0; f < folhas.length; f++) {
@@ -207,7 +208,7 @@ function DeSimone (expressao) {
 			if (folhasDaLetra.length > 0) {
 				// cria estados correspondentes as transições;
 				var nomeEstado = 'q'+this._contadorEstados;
-				this._estadosAutomato[estado].transicoes[letra] = nomeEstado;
+				this._estadosAutomato[estado].transicoes[letra][0] = nomeEstado;
 				this._estadosAutomato['q'+this._contadorEstados] = {
 					nome: nomeEstado,
 					id: nomeEstado,
@@ -221,7 +222,7 @@ function DeSimone (expressao) {
   		}
 		for( var t in this._estadosAutomato[estado].transicoes) {
 			if (this._estadosAutomato[estado]) {
-				var transicao = this._estadosAutomato[estado].transicoes[t]
+				var transicao = this._estadosAutomato[estado].transicoes[t][0]
 				if (transicao) {
 					this.gerarEstados(transicao);
 				}
@@ -250,8 +251,8 @@ function DeSimone (expressao) {
 				estado = this._estadosAutomato[e]
 				for (var l = 0; l < this._alfabeto.length; l++) {
 					letra = this._alfabeto[l]
-					if (estado.transicoes[letra] && estado.transicoes[letra] === nome) {
-						estado.transicoes[letra] = estadoEquivalente;
+					if (estado.transicoes[letra] && estado.transicoes[letra][0] === nome) {
+						estado.transicoes[letra][0] = estadoEquivalente;
 						break;
 					}
 				}

@@ -28,7 +28,7 @@ function Minimizacao(estados, alfabeto) {
 		function percorrerEstadosAlcancaveis(estadoPai) {
 			estadoPai = estados[estadoPai];
 			for (var terminal in estadoPai.transicoes) {
-				var transicao = estadoPai.transicoes[terminal];
+				var transicao = estadoPai.transicoes[terminal][0];
 				if (transicao && !_.contains(alcancaveis, transicao)) {
 
 					alcancaveis.push(transicao)
@@ -60,7 +60,7 @@ function Minimizacao(estados, alfabeto) {
 			for (var estadoIndex in estados) {
 				var estado = estados[estadoIndex];
 				for (var terminal in estado.transicoes) {
-					var transicao = estado.transicoes[terminal];
+					var transicao = estado.transicoes[terminal][0];
 
 					if (transicao && _.contains(vivos, transicao) && !_.contains(vivos, estado.id)) {
 						vivos.push(estado.id);
@@ -92,7 +92,8 @@ function Minimizacao(estados, alfabeto) {
       
       	for (var index in this._alfabeto) {
         	var terminal = this._alfabeto[index];
-        	this._estados['Φ'].transicoes[terminal] = 'Φ';
+        	this._estados['Φ'].transicoes[terminal] = [];
+        	this._estados['Φ'].transicoes[terminal][0] = 'Φ';
       	}
 
       	for (var i in this._estados) {
@@ -100,7 +101,7 @@ function Minimizacao(estados, alfabeto) {
 			for (var terminal in estado.transicoes) {
 				var transicao = estado.transicoes[terminal];
 				if (transicao === false) {
-					estado.transicoes[terminal] = 'Φ';
+					estado.transicoes[terminal][0] = 'Φ';
 					counter++;
 				}
 			}
@@ -126,7 +127,7 @@ function Minimizacao(estados, alfabeto) {
 				var listaTransicao = [];
 				var isEqual = false;
 				for (var terminal in estado.transicoes) {
-					var transicao = estado.transicoes[terminal];
+					var transicao = estado.transicoes[terminal][0];
 					listaTransicao.push(transicao);
 				}
 
@@ -152,7 +153,7 @@ function Minimizacao(estados, alfabeto) {
 					var novoConjunto = '';
 
 					for (var terminal in estado.transicoes) {
-						var transicao = estado.transicoes[terminal];
+						var transicao = estado.transicoes[terminal][0];
 						for (var indexConjunto in listaConjuntos) {
 							var conjunto = listaConjuntos[indexConjunto];
 							if (_.contains(conjunto, transicao)) {
@@ -219,7 +220,7 @@ function Minimizacao(estados, alfabeto) {
 
 			var estadoRepresentado = conjunto[0];
 			for (var terminal in this._estados[estadoRepresentado].transicoes) {
-				var transicao = this._estados[estadoRepresentado].transicoes[terminal];
+				var transicao = this._estados[estadoRepresentado].transicoes[terminal][0];
 				var transicaoRepresentada;
 
 				for (var indexConjunto in conjuntoEstados ) {
@@ -230,7 +231,8 @@ function Minimizacao(estados, alfabeto) {
 					}
 				}
 
-				listaEstados[nomeEstado].transicoes[terminal] = transicaoRepresentada;
+				listaEstados[nomeEstado].transicoes[terminal] = [];
+				listaEstados[nomeEstado].transicoes[terminal][0] = transicaoRepresentada;
 			}
 		}
 

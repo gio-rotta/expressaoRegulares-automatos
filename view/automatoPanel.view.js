@@ -75,7 +75,7 @@ var AutomatoPanelView = Backbone.View.extend({
   novoAutomato: function() {
     if (!this.automatoView) {
       var estados = {};
-      estados['q0'] = { nome: 'q0', id:'q0', inicial: true, final:true, transicoes : {a:'q0'}, }
+      estados['q0'] = { nome: 'q0', id:'q0', inicial: true, final:true, transicoes : {a:['q0']}, }
       this.automato = {estados:estados, alfabeto:['a'], elGrafo:'grafo-automato-2'};
       this.automatoView = new AutomatoView(this.automato);
       this.automatoView.gerarTabelaDinamica();
