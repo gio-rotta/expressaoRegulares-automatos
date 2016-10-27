@@ -46,7 +46,7 @@ function Determinizacao(estados, alfabeto) {
 						var transicoes = estados[estado].transicoes[terminal];
 
 						for (var transicaoIndex in transicoes) {
-							if (!transicoes[transicaoIndex]) {
+							if (!transicoes[transicaoIndex] || transicoes[transicaoIndex] == null) {
 								delete transicoes[transicaoIndex];
 							}
 						}
