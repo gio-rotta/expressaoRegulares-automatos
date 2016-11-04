@@ -21,7 +21,6 @@ var RegexPanelView = Backbone.View.extend({
   },  
 
   regexSelecionado: function(event) {
-    console.log('teste')
     $in = $(event.currentTarget);
     var fileData;
 
@@ -91,8 +90,10 @@ var RegexPanelView = Backbone.View.extend({
   },
 
   verificarER: function(event) {
-    var eValido = this.expressaoRegular.verificarExpressao($(event.currentTarget).val());
-    if (!eValido || $(event.currentTarget).val() === '') {
+    // adicionar concatenação a expressão
+    expressao = $(event.currentTarget).val().replace(/([a-z0-9*?)](?!$|[)*?|]))/g,'$1.');
+    var eValido = this.expressaoRegular.verificarExpressao(expressao);
+    if (!eValido || expressao === '') {
       this.$('.js-save-er').toggleClass('disabled', true);
       this.$('.js-deSimone').toggleClass('disabled', true);
       this.$('.er-validador').text('Expressão Inválida');
@@ -102,7 +103,7 @@ var RegexPanelView = Backbone.View.extend({
       this.$('.js-deSimone').toggleClass('disabled', false);
       this.$('.er-validador').text('Expressão Válida!');
       this.$('.er-validador').removeClass('text-danger').addClass('text-success')
-      this.expressao = $(event.currentTarget).val();
+      this.expressao = expressao;
     }
   },
 
@@ -110,6 +111,7 @@ var RegexPanelView = Backbone.View.extend({
     var deSimone = new DeSimone(this.expressao);
     deSimone.construirArvore();
     deSimone._estadosAutomato['q0'] = { nome: 'q0', id:'q0', inicial: true, transicoes : {}, };
+    console.log(deSimone._grafo)
     var estados = deSimone.gerarEstados('q0');
     this.automato = {isAutomato:true, estados:estados, alfabeto:deSimone._alfabeto};
     var automatoView = new AutomatoView({estados:estados, alfabeto:deSimone._alfabeto, elGrafo:'grafo-automato-1'});

@@ -1,7 +1,7 @@
 function DeSimone (expressao) {
 
     this._expressao = expressao;
-    this._alfabeto = _.uniq(expressao.match(/[a-z]/g));
+    this._alfabeto = _.uniq(expressao.match(/[a-z]/g)).reverse();
     this._grafo = new Grafo();
     this._contadorDeSimbolos = 1;
 	this._simbolosSubstituidos = {};
@@ -105,6 +105,7 @@ function DeSimone (expressao) {
 		}
 		if (!nodo) var nodo = 0;
 		if (!direcao) var direcao = 'descer';
+
 		var operador = this._grafo.dadosDoVertice(nodo).operador
 		if (operador) {
 			if (direcao == 'descer') {
@@ -112,6 +113,8 @@ function DeSimone (expressao) {
 			} else {
 				var proximoNodo = this.rotinasSubir(nodo, operador);
 			}
+			// eliminar loop * -> *
+			if (operador == proximoNodo.operador && operador == '*') this._grafo.dadosDoVertice(proximoNodo.nodo).operador = 'N/A';
 			if (proximoNodo) this.percorrerNodo(proximoNodo.nodo, proximoNodo.direcao);
 		} else {
 			this._folhasEncontradas.push(nodo);
@@ -126,7 +129,7 @@ function DeSimone (expressao) {
 	this.rotinasDescer = function(nodo, operador) {
 		var recebidos = this._grafo.recebidos(nodo);
 		var emitidos = this._grafo.emitidos(nodo)
-
+		console.log(operador+' '+nodo+' descendo encontrou '+this._grafo.dadosDoVertice(emitidos[0]).operador +' '+emitidos[0])
 		if (recebidos.length < 0 || emitidos.length < 0) return false;
 
 		if (operador === '|') {
@@ -141,13 +144,16 @@ function DeSimone (expressao) {
 		} else if (operador === '*') {
 			var recebido = (recebidos[0])? recebidos[0] : 'fim';
 			this._listaEspera.push({direcao: "subir", nodoDestino: this._grafo.dadosDoVertice(nodo).costura})
+			return { nodo:emitidos[0], direcao: 'descer', operador: this._grafo.dadosDoVertice(emitidos[0]).operador };
+		} else {
 			return { nodo:emitidos[0], direcao: 'descer' };
 		}
 	}
 
 	this.rotinasSubir = function(nodo, operador) {
 		var recebidos = this._grafo.recebidos(nodo);
-		var emitidos = this._grafo.emitidos(nodo)
+		var emitidos = this._grafo.emitidos(nodo);
+		
 		if (recebidos.length < 0 || emitidos.length < 0) return;
 
 		if (operador === '|') {
@@ -155,22 +161,28 @@ function DeSimone (expressao) {
 			while (!(this._grafo.dadosDoVertice(nodo).folha)) {
 				nodo = ( this._grafo.emitidos(nodo)[1])?  this._grafo.emitidos(nodo)[1] :  this._grafo.emitidos(nodo)[0];
 			}
+
 			return { nodo:this._grafo.dadosDoVertice(nodo).costura, direcao: 'subir' };
 		} else if (operador === '.') {
+
 			return { nodo:emitidos[1], direcao: 'descer' };
 		} else if (operador === '?') {
 			var recebido = (recebidos[0])? recebidos[0] : 'fim';
+
 			return { nodo:recebido, direcao: 'subir' };
 		} else if (operador === '*') {
 			var recebido = (recebidos[0])? recebidos[0] : 'fim';
 			this._listaEspera.push({direcao: "subir", nodoDestino: this._grafo.dadosDoVertice(nodo).costura})
-			return { nodo:emitidos[0], direcao: 'descer' };
+
+			return { nodo:emitidos[0], direcao: 'descer', operador: this._grafo.dadosDoVertice(emitidos[0]).operador };
+		} else {
+			return { nodo:recebidos[0], direcao: 'subir' };
 		}	
 	}
 
 	this.gerarEstados = function(estado) {
-		console.log(estado)
 		var originado = this._estadosAutomato[estado].originado;
+		
 		this._folhasEncontradas = [];
 		var folhas = [];
 		// Percorre a árvore a fim de encontrar as folhas alcançaveis.
@@ -205,9 +217,11 @@ function DeSimone (expressao) {
 				}
 				if (folha === 'fim' ) this._estadosAutomato[estado].final = true;
 			}
+
 			if (folhasDaLetra.length > 0) {
 				// cria estados correspondentes as transições;
 				var nomeEstado = 'q'+this._contadorEstados;
+				
 				this._estadosAutomato[estado].transicoes[letra][0] = nomeEstado;
 				this._estadosAutomato['q'+this._contadorEstados] = {
 					nome: nomeEstado,
@@ -220,6 +234,7 @@ function DeSimone (expressao) {
 				this._contadorEstados++;
 			}
   		}
+
 		for( var t in this._estadosAutomato[estado].transicoes) {
 			if (this._estadosAutomato[estado]) {
 				var transicao = this._estadosAutomato[estado].transicoes[t][0]
@@ -240,6 +255,7 @@ function DeSimone (expressao) {
 			if (estado.alcancavel) {
 				if ( _.isEqual(estado.alcancavel.sort(function(a, b){return a-b}), folhas.sort(function(a, b){return a-b}))) {
 					estadoEquivalente = estado.nome;
+
 					delete this._estadosAutomato[nome];
 					break;
 				}
