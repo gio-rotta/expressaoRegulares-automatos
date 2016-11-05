@@ -12,7 +12,7 @@ function Minimizacao(estados, alfabeto) {
 			alert('Não é possível minimizar um autômato não determinístico!');
 			return this._estados;
 		}
-		this.eliminarEstadosInacessíveis();
+		this._estados = this.eliminarEstadosInacessíveis();
 		this.eliminarEstadosMortos();
 		this.eliminarIndefinicoes();
 		this.eliminarEstadosEquivalentes();
@@ -50,7 +50,6 @@ function Minimizacao(estados, alfabeto) {
 			for (var terminal in estadoPai.transicoes) {
 				var transicao = estadoPai.transicoes[terminal][0];
 				if (transicao && !_.contains(alcancaveis, transicao)) {
-
 					alcancaveis.push(transicao)
 					percorrerEstadosAlcancaveis(transicao);
 				}
@@ -59,11 +58,13 @@ function Minimizacao(estados, alfabeto) {
 		}
 
 		percorrerEstadosAlcancaveis(estadoInicial.id);
-		var estadosParaDeletar = _.difference(Object.keys(this._estados), this._alcancaveis);
-
-		for (var i = 0; i < estadosParaDeletar.length; i++) {
-			delete this._estados[estadosParaDeletar[i]];
+		var estadosParaDeletar = _.difference(Object.keys(estados), this._alcancaveis);
+		var novosEstados = {};
+		for (var i = 0; i < this._alcancaveis.length; i++) {
+			novosEstados[this._alcancaveis[i]] = estados[this._alcancaveis[i]]
 		}
+
+		return novosEstados;
 	}
 
 	this.eliminarEstadosMortos = function() {
@@ -119,7 +120,7 @@ function Minimizacao(estados, alfabeto) {
       	for (var i in this._estados) {
 			var estado = this._estados[i];
 			for (var terminal in estado.transicoes) {
-				var transicao = estado.transicoes[terminal];
+				var transicao = estado.transicoes[terminal][0];
 				if (transicao === false) {
 					estado.transicoes[terminal][0] = 'Φ';
 					counter++;
@@ -142,15 +143,19 @@ function Minimizacao(estados, alfabeto) {
 		function rodadaConstrucaoEquivalencia() {
 			
 			var novaListaDeConjuntos = {};
+			//percorrer todos os estados
 			for ( var estado in estadosOficiais) {
 				estado = estadosOficiais[estado];
 				var listaTransicao = [];
 				var isEqual = false;
+
+				// adicionar as transições do estado em uma lista
 				for (var terminal in estado.transicoes) {
 					var transicao = estado.transicoes[terminal][0];
 					listaTransicao.push(transicao);
 				}
 
+				//verificar em qual conjunto estado pertence
 				for (var indexConjunto in listaConjuntos) {
 					var conjunto = listaConjuntos[indexConjunto];
 					if (_.contains(conjunto, estado.id)) {
@@ -158,6 +163,7 @@ function Minimizacao(estados, alfabeto) {
 					} 
 				}
 
+				// percorre todos os conjuntos para verificar se existe outro equivalente, se existir ele adiciona a este conjunto
 				for (var indexConjunto in listaConjuntos) {
 					var conjunto = listaConjuntos[indexConjunto];
 					if (_.isEqual(_.intersection(_.uniq(listaTransicao), conjunto), _.uniq(listaTransicao))) {
@@ -169,6 +175,7 @@ function Minimizacao(estados, alfabeto) {
 					}
 				}
 
+				// caso não exista, cria novo conjunto, de acordo com suas transições
 				if (!isEqual) {
 					var novoConjunto = '';
 
@@ -191,6 +198,7 @@ function Minimizacao(estados, alfabeto) {
 				}
 			}
 
+			// verifica se ocorreu mudanças da lista de conjunto nova para a anterior.
 			ocorreuMudancas = false;
 			if (Object.keys(listaConjuntos).length != Object.keys(novaListaDeConjuntos).length) ocorreuMudancas = true;
 
@@ -200,6 +208,7 @@ function Minimizacao(estados, alfabeto) {
 				}
 			}
 
+			//caso ocorreu mudança continua verificando as classes de equivalência.
 			if (ocorreuMudancas) {
 				listaConjuntos = novaListaDeConjuntos;
 				rodadaConstrucaoEquivalencia()
@@ -210,9 +219,11 @@ function Minimizacao(estados, alfabeto) {
 
 		rodadaConstrucaoEquivalencia();
 
+		//construir nova tabela com a lista de conjuntos como estados;
 		return this.construirNovaTabela(listaConjuntos);
 	}
 
+	//Cria estados e transições a partir das classes de equivalência.
 	this.construirNovaTabela = function(conjuntoEstados) {
 		var listaEstados = {};
 

@@ -72,7 +72,8 @@ function Determinizacao(estados, alfabeto) {
 					}
 				}
 			}
-			console.log(alfabeto)
+			
+			//adicionar transições resultantes por letra do alfabeto
 			for (var terminal in alfabeto) {
 				console.log(terminal)
 				terminal = alfabeto[terminal];
