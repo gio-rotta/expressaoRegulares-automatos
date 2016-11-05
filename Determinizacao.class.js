@@ -5,19 +5,23 @@ function Determinizacao(estados, alfabeto) {
     this._listaDeLetras = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','X','W','Y','Z'];
 
 	this.determinizarAutomato = function() {
+		// verificar se autômato é determinístico
 		var ehDeterministico = this.verificarDeterminismo();
 		if (ehDeterministico) return this._estados;
 
 		var estadoInicial = this.encontrarEstadoInicial();
 		var estados = this._estados;
+		var alfabeto = this._alfabeto;
 		var novosEstados = {};
 
 		criarEstadosDeterministicos(JSON.stringify([estadoInicial.id]));
 
 		function criarEstadosDeterministicos(transicoes) {
 
+
 			var final = false;
 			var transicoes = JSON.parse(transicoes)
+			//se alguma transição que compõe o estado for final, então estado é final
 			for (var transicaoIndex in transicoes) {
 				var transicao = transicoes[transicaoIndex];
 				if (transicao) {
@@ -27,8 +31,10 @@ function Determinizacao(estados, alfabeto) {
 				}
 			}
 
+			// nome do estado é o conjunto das transições
 			var nomeEstado = JSON.stringify(transicoes);
 
+			// criar estado
 			novosEstados[nomeEstado] = {
 				nome: nomeEstado,
 				id: nomeEstado,
@@ -38,16 +44,20 @@ function Determinizacao(estados, alfabeto) {
 			}
 
 			var listaTransicoes = [];
+
+			// percorre cada estado que compõe o novo estado
 			for (var t = 0; t < JSON.parse(nomeEstado).length; t++) {
 				var estado = JSON.parse(nomeEstado)[t];
 	
 				if (estado) {
-					for (var terminal in estados[estado].transicoes) {
+					// verifica em cada letra do alfabeto as transições equivalentes
+					for (var terminal in alfabeto) {
+						terminal = alfabeto[terminal];
 						var transicoes = estados[estado].transicoes[terminal];
 
 						for (var transicaoIndex in transicoes) {
-							if (!transicoes[transicaoIndex] || transicoes[transicaoIndex] == null) {
-								delete transicoes[transicaoIndex];
+						 	if (!transicoes[transicaoIndex] || transicoes[transicaoIndex] == null) {
+						 		delete transicoes[transicaoIndex];
 							}
 						}
 
@@ -58,20 +68,26 @@ function Determinizacao(estados, alfabeto) {
 							}
 
 							listaTransicoes[terminal] = _.union(listaTransicoes[terminal], transicoes);
-							novosEstados[nomeEstado].transicoes[terminal] = []
-							novosEstados[nomeEstado].transicoes[terminal][0] = JSON.stringify(listaTransicoes[terminal]);
-
-							if (!novosEstados[JSON.stringify(listaTransicoes[terminal])]) {
-								criarEstadosDeterministicos(JSON.stringify(listaTransicoes[terminal]));
-							}
-						} else {
-							novosEstados[nomeEstado].transicoes[terminal] = []
-							novosEstados[nomeEstado].transicoes[terminal][0] = false;
-
 						}
 					}
 				}
+			}
+			console.log(alfabeto)
+			for (var terminal in alfabeto) {
+				console.log(terminal)
+				terminal = alfabeto[terminal];
 
+				if (!novosEstados[JSON.stringify(listaTransicoes[terminal])]) {
+					criarEstadosDeterministicos(JSON.stringify(listaTransicoes[terminal]));
+				}
+
+				if (listaTransicoes[terminal]) {
+					novosEstados[nomeEstado].transicoes[terminal] = []
+					novosEstados[nomeEstado].transicoes[terminal][0] = JSON.stringify(listaTransicoes[terminal]);
+				} else {
+					novosEstados[nomeEstado].transicoes[terminal] = []
+					novosEstados[nomeEstado].transicoes[terminal][0] = false;
+				}
 			}
 		}
 		

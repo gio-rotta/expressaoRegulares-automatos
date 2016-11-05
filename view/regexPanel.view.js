@@ -91,8 +91,8 @@ var RegexPanelView = Backbone.View.extend({
 
   verificarER: function(event) {
     // adicionar concatenação a expressão
+    var eValido = this.expressaoRegular.verificarExpressao($(event.currentTarget).val());
     expressao = $(event.currentTarget).val().replace(/([a-z0-9*?)](?!$|[)*?|]))/g,'$1.');
-    var eValido = this.expressaoRegular.verificarExpressao(expressao);
     if (!eValido || expressao === '') {
       this.$('.js-save-er').toggleClass('disabled', true);
       this.$('.js-deSimone').toggleClass('disabled', true);
@@ -103,6 +103,7 @@ var RegexPanelView = Backbone.View.extend({
       this.$('.js-deSimone').toggleClass('disabled', false);
       this.$('.er-validador').text('Expressão Válida!');
       this.$('.er-validador').removeClass('text-danger').addClass('text-success')
+      expressao = $(event.currentTarget).val().replace(/([a-z0-9*?)](?!$|[)*?|]))/g,'$1.');
       this.expressao = expressao;
     }
   },
