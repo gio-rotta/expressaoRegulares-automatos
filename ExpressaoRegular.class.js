@@ -6,7 +6,8 @@ function ExpressaoRegular () {
 	this.verificarExpressao = function(expressao) {
     	var checkLetters = /[^a-z0-9?*|()]/.test(expressao);
 
-        if ( checkLetters || /[*?.|(][*?|]/.test(expressao) || /[(][)]/.test(expressao) || /[(]([*?|.\s]|$)/.test(expressao) || (/[|]$/.test(expressao)) ) {
+        if ( checkLetters || /[*?.|(][*?|]/.test(expressao) || /[(][)]/.test(expressao) || /[(]([*?|.\s]|$)/.test(expressao) 
+        	|| (/[|]$/.test(expressao) || /^([*?|.\s]|$)/.test(expressao)) ) {
             return false;
         }
 
