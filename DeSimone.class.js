@@ -1,281 +1,283 @@
 function DeSimone (expressao) {
 
-    this._expressao = expressao;
-    this._alfabeto = _.uniq(expressao.match(/[a-z]/g)).reverse();
-    this._grafo = new Grafo();
-    this._contadorDeSimbolos = 1;
-	this._simbolosSubstituidos = {};
-	this._contadorArvore = -1;
-	this._listaNodosEsperandoCostura = [];
-	this._listaEspera = [];
-	this._folhasEncontradas = [];
-	this._contadorEstados = 1;
-	this._estadosAutomato = {};
+    this._expressao = expressao.replace(/\*\*[*]*/g, '*');
+    this._alfabeto = [];
 
-	function spliceSlice(str, index, end, add) {
-	  if (index < 0) {
-	    index = str.length + index;
-	    if (index < 0) {
-	      index = 0;
-	    }
-	  }
+	this.construirArvoreRPN = function(expressao) {
+        var tree = [];
+        var index = 0;
+        var alphabet = '';
+        var counter = 1;
+        var waiting = [];
 
-	  return str.slice(0, index) + (add || "") + str.slice(end);
-	}
+	    expressao = (expressao)? expressao : this._expressao;
 
-	this.construirArvore = function(expressao, raiz) {
-		var expressao = (expressao)? expressao : this._expressao;
-		// reconhecer parenteses e sustituir por simbolos
-		var subexpEntreParenteses = XRegExp.matchRecursive(expressao, '\\(', '\\)', 'g', {
-			valueNames: [null, null, 'value', null],
-		});
+        for (var i = expressao.length - 1; i >= 0; i--) {
+            switch (expressao[i]) {
+                case '*':
+                case '?':
+                    tree[index] = expressao[i];
+                    tree[2*index + 1] = '';
+                    tree[2*(index + 1)] = '';
+                    index = 2*index + 1;
+                    break;
+                case '|':
+                case '.':
+                    tree[index] = expressao[i];
+                    tree[2*index + 1] = '';
+                    tree[2*(index + 1)] = '';
+                    waiting.push(index);
+                    index = 2*(index + 1);
+                    break;
+                default:
+                    tree[index] = counter + '-' + expressao[i];
 
-		while(subexpEntreParenteses.length > 0) {
-			var obj = subexpEntreParenteses[0];
-			expressao = spliceSlice(expressao, obj.start - 1, obj.end + 1, this._contadorDeSimbolos);
-			this._simbolosSubstituidos[this._contadorDeSimbolos++] = obj.value;
-			var subexpEntreParenteses = XRegExp.matchRecursive(expressao, '\\(', '\\)', 'g', {
-				valueNames: [null, null, 'value', null],
-			});
-		}
+                    if (alphabet.indexOf(expressao[i]) < 0) {
+                        alphabet = alphabet + expressao[i];
+                    }
 
-		//reconhecer operadores pela ordem, |, ., ?, *
-    	var operadorU = expressao.indexOf('|');
-    	var operadorC = expressao.indexOf('.');
-    	var operadorD = expressao.indexOf('?');
-    	var operadorF = expressao.indexOf('*');
+                    index = 2*waiting.pop() + 1;
+                    counter++;
+                    break;
+            }
+        }
 
-    	if (operadorU !== -1) {
-    		this._contadorArvore++;
-    		this._grafo.adicionaVertice(this._contadorArvore, {folha:false, operador: "|", costura: "false"});
-    		this._listaNodosEsperandoCostura.push(this._contadorArvore);
-    		if (raiz !== undefined) this._grafo.conecta(raiz, this._contadorArvore);
-    		
-    		var proximaRaiz = this._contadorArvore;
-    		var esq = expressao.slice(0, operadorU);
-    		this.construirArvore(esq, proximaRaiz);
-    		var dir = expressao.slice(operadorU + 1, expressao.length);
-    		this.construirArvore(dir, proximaRaiz);
-    	} else if (operadorC !== -1) {
-    		this._contadorArvore++;
-    		this._grafo.adicionaVertice(this._contadorArvore, {folha:false, operador: ".", costura: "false"});
-    		this._listaNodosEsperandoCostura.push(this._contadorArvore);
-    		if (raiz !== undefined) this._grafo.conecta(raiz, this._contadorArvore);
+        this._alfabeto = alphabet.split('');
+        this._treeRPN = tree;
+        return tree;
+    };
 
-			var proximaRaiz = this._contadorArvore;
-    		var esq = expressao.slice(0, operadorC);
-    		this.construirArvore(esq, proximaRaiz);
-    		var dir = expressao.slice(operadorC + 1, expressao.length);
-    		this.construirArvore(dir, proximaRaiz);
-    	} else if (operadorD !== -1) {
-    		this._contadorArvore++;
-    		var costura = (this._listaNodosEsperandoCostura.length > 0)? this._listaNodosEsperandoCostura.pop() : 'fim';
-    		this._grafo.adicionaVertice(this._contadorArvore, {folha:false, operador: "?", costura: costura});
-    		this._listaNodosEsperandoCostura.push(this._contadorArvore);
-    		if (raiz !== undefined) this._grafo.conecta(raiz, this._contadorArvore);
+    this._initComposition = function() {
+        var newComposition = {};
 
-    		var esq = expressao.charAt(operadorD - 1);
-    		this.construirArvore(esq, this._contadorArvore);
-    	} else if (operadorF !== -1) {
-    		this._contadorArvore++;
-    		var costura = (this._listaNodosEsperandoCostura.length > 0)? this._listaNodosEsperandoCostura.pop() : 'fim';
-    		this._grafo.adicionaVertice(this._contadorArvore, {folha:false, operador: "*", costura: costura});
-    		this._listaNodosEsperandoCostura.push(this._contadorArvore);
-    		if (raiz !== undefined) this._grafo.conecta(raiz, this._contadorArvore);
+        for (var i = 0; i < this._alfabeto.length; i++) {
+            newComposition[this._alfabeto[i]] = [];
+        }
 
-    		var esq = expressao.charAt(operadorF - 1);
-    		this.construirArvore(esq, this._contadorArvore);
-    	} else {
-    		if (/^\d+$/.test(expressao)) {
-				this.construirArvore(this._simbolosSubstituidos[expressao], this._contadorArvore);
-    		} else {
-    			this._contadorArvore++;
-    			var costura = (this._listaNodosEsperandoCostura.length > 0)? this._listaNodosEsperandoCostura.pop() : 'fim';
-    			this._grafo.adicionaVertice(this._contadorArvore, {folha:true, costura: costura, valor: expressao });
-    			if (raiz !== undefined) this._grafo.conecta(raiz, this._contadorArvore);
-    		}
-    	}
-    	return;
-	}
+        return newComposition;
+    };
 
-	this.percorrerNodo = function(nodo, direcao) {
-		if (nodo === 'fim') {
-			this._folhasEncontradas.push(nodo);
-			return ['fim'];
-		}
-		if (!nodo) var nodo = 0;
-		if (!direcao) var direcao = 'descer';
+    this._getNextUp = function(index) {
+        switch (this._treeRPN[index]) {
+            case '*':
+                return index;
+            case '?':
+                return index%2 === 0 ? -1 : Math.floor((index - 1)/2);
+            case '|':
+                while (this._treeRPN[index] === '*' || this._treeRPN[index] === '|') {
+                    index = 2*(index + 1);
+                }
 
-		var operador = this._grafo.dadosDoVertice(nodo).operador
-		if (operador) {
-			if (direcao == 'descer') {
-				var proximoNodo = this.rotinasDescer(nodo, operador);
-			} else {
-				var proximoNodo = this.rotinasSubir(nodo, operador);
-			}
-			// eliminar loop * -> *
-			if (operador == proximoNodo.operador && operador == '*') this._grafo.dadosDoVertice(proximoNodo.nodo).operador = 'N/A';
-			if (proximoNodo) this.percorrerNodo(proximoNodo.nodo, proximoNodo.direcao);
-		} else {
-			this._folhasEncontradas.push(nodo);
-			if (this._listaEspera.length > 0) {
-				nodoEsperando = this._listaEspera.pop();
-				this.percorrerNodo(nodoEsperando.nodoDestino, nodoEsperando.direcao);
-			}
-		}
-		return this._folhasEncontradas;
-	}
+                if (this._treeRPN[index] === '?' || this._treeRPN[index] === '*') {
+                    return -1;
+                }
 
-	this.rotinasDescer = function(nodo, operador) {
-		var recebidos = this._grafo.recebidos(nodo);
-		var emitidos = this._grafo.emitidos(nodo)
-		console.log(operador+' '+nodo+' descendo encontrou '+this._grafo.dadosDoVertice(emitidos[0]).operador +' '+emitidos[0])
-		if (recebidos.length < 0 || emitidos.length < 0) return false;
+                return this._getNextRight(index);
+            case '.':
+                return 2*(index + 1);
+                break;
+        }
+    };
 
-		if (operador === '|') {
-			this._listaEspera.push({direcao: "descer", nodoDestino: emitidos[1]})
-			return { nodo:emitidos[0], direcao: 'descer' };
-		} else if (operador === '.') {
-			return { nodo:emitidos[0], direcao: 'descer' };
-		} else if (operador === '?') {
-			var recebido = (recebidos[0])? recebidos[0] : 'fim';
-			this._listaEspera.push({direcao: "subir", nodoDestino: this._grafo.dadosDoVertice(nodo).costura})
-			return { nodo:emitidos[0], direcao: 'descer' };
-		} else if (operador === '*') {
-			var recebido = (recebidos[0])? recebidos[0] : 'fim';
-			this._listaEspera.push({direcao: "subir", nodoDestino: this._grafo.dadosDoVertice(nodo).costura})
-			return { nodo:emitidos[0], direcao: 'descer', operador: this._grafo.dadosDoVertice(emitidos[0]).operador };
-		} else {
-			return { nodo:emitidos[0], direcao: 'descer' };
-		}
-	}
+    this._getCompositionDown = function(start, newComposition) {
+        var endLoop = false;
+        var next = start;
+        var composition = newComposition ? newComposition : this._initComposition();
+        var waiting = [];
 
-	this.rotinasSubir = function(nodo, operador) {
-		var recebidos = this._grafo.recebidos(nodo);
-		var emitidos = this._grafo.emitidos(nodo);
-		
-		if (recebidos.length < 0 || emitidos.length < 0) return;
+        while (!endLoop) {
+            switch (this._treeRPN[next]) {
+                case '*':
+                    waiting.push(next);
+                    next = 2*next + 1;
+                    break;
+                case '?':
+                    waiting.push(next);
+                    next = 2*next + 1;
+                    break;
+                case '|':
+                    waiting.push(next);
+                    next = 2*next + 1;
+                    break;
+                case '.':
+                    next = 2*next + 1;
+                    break;
+                default:
+                    var leaf = this._treeRPN[next];
 
-		if (operador === '|') {
-			//ignorar tudo e pegar a costura mais a direita
-			while (!(this._grafo.dadosDoVertice(nodo).folha)) {
-				nodo = ( this._grafo.emitidos(nodo)[1])?  this._grafo.emitidos(nodo)[1] :  this._grafo.emitidos(nodo)[0];
-			}
+                    if (composition[leaf[leaf.length - 1]].indexOf(leaf) < 0) {
+                        composition[leaf[leaf.length - 1]].push(leaf);
+                    }
 
-			return { nodo:this._grafo.dadosDoVertice(nodo).costura, direcao: 'subir' };
-		} else if (operador === '.') {
+                    if (waiting.length == 0) {
+                        endLoop = true;
+                    } else {
+                        next = waiting.pop();
 
-			return { nodo:emitidos[1], direcao: 'descer' };
-		} else if (operador === '?') {
-			var recebido = (recebidos[0])? recebidos[0] : 'fim';
+                        if (this._treeRPN[next] == '*' || this._treeRPN[next] == '?') {
+                            if (next === 0 || next%2 === 0) {
+                                if (this._getNextRight(next) < 0) {
+                                    composition['L'] = true;
+                                    endLoop = true;
+                                } else {
+                                    next = this._getNextRight(next);
+                                }
+                            } else {
+                                next = this._getNextUp(Math.floor((next - 1)/2));
 
-			return { nodo:recebido, direcao: 'subir' };
-		} else if (operador === '*') {
-			var recebido = (recebidos[0])? recebidos[0] : 'fim';
-			this._listaEspera.push({direcao: "subir", nodoDestino: this._grafo.dadosDoVertice(nodo).costura})
+                                if (next === -1) {
+                                    composition['L'] = true;
+                                    endLoop = true;
+                                }
+                            }
+                        } else {
+                            next = 2 * (next + 1);
+                        }
+                    }
 
-			return { nodo:emitidos[0], direcao: 'descer', operador: this._grafo.dadosDoVertice(emitidos[0]).operador };
-		} else {
-			return { nodo:recebidos[0], direcao: 'subir' };
-		}	
-	}
+                    break;
+            }
+        }
 
-	this.gerarEstados = function(estado) {
-		var originado = this._estadosAutomato[estado].originado;
-		
-		this._folhasEncontradas = [];
-		var folhas = [];
-		// Percorre a árvore a fim de encontrar as folhas alcançaveis.
-		if (originado) {
-			for (var o = 0; o < originado.length; o++) {
-				origem = originado[o]
-				folhas = _.union(folhas, this.percorrerNodo(this._grafo.dadosDoVertice(origem).costura, 'subir'));
-			}
-		} else {
-			folhas = this.percorrerNodo();
-		}
+        return composition;
+    };
 
-		// Verifica se as folhas alcançáveis corresponde a algum estado existente.
-		var existeEquivalente = this.verificarEquivalencia(folhas, estado);
-		if (existeEquivalente) { 
-			return false;
-		} else {
-			this._estadosAutomato[estado].alcancavel = folhas;
-		}
+    this._getNextRight = function (index) {
+        var parent = Math.floor((index - 1)/2);
 
-		// Para cada letra do afabeto, verifica quais folhas são correspondentes
-		for (var l = 0; l < this._alfabeto.length; l++) {
-			letra = this._alfabeto[l]
-			this._estadosAutomato[estado].transicoes[letra] = [];
-			this._estadosAutomato[estado].transicoes[letra].push(false);
-			var folhasDaLetra = [];
-			var final = false;
-			for (var f = 0; f < folhas.length; f++) {
-				folha = folhas[f];
-				if (folha !== 'fim' && this._grafo.dadosDoVertice(parseInt(folha)).valor == letra) {
-					folhasDaLetra.push(folha);
-				}
-				if (folha === 'fim' ) this._estadosAutomato[estado].final = true;
-			}
+        while (parent%2 === 0) {
+            index = parent;
+            parent = Math.floor((index - 1)/2);
+        }
 
-			if (folhasDaLetra.length > 0) {
-				// cria estados correspondentes as transições;
-				var nomeEstado = 'q'+this._contadorEstados;
-				
-				this._estadosAutomato[estado].transicoes[letra][0] = nomeEstado;
-				this._estadosAutomato['q'+this._contadorEstados] = {
-					nome: nomeEstado,
-					id: nomeEstado,
-					originado: _.uniq(folhasDaLetra),
-					inicial: false,
-					final: false,
-					transicoes : {}
-				};
-				this._contadorEstados++;
-			}
-  		}
+        return Math.floor((Math.floor((index - 1)/2) - 1)/2);
+    };
 
-		for( var t in this._estadosAutomato[estado].transicoes) {
-			if (this._estadosAutomato[estado]) {
-				var transicao = this._estadosAutomato[estado].transicoes[t][0]
-				if (transicao) {
-					this.gerarEstados(transicao);
-				}
-			}
-		}
+    this._getCompositionUp = function(start, newComposition) {
+        var next = this._getNextUp(start%2 === 0 ? this._getNextRight(start) : Math.floor((start - 1)/2));
+        var composition = newComposition ? newComposition : this._initComposition();
 
-		return this._estadosAutomato;
-	}
+        return this._getCompositionDown(next, composition);
+    };
 
-	this.verificarEquivalencia = function(folhas, nome) {
-		var estadoEquivalente = false;
-		for( var i in this._estadosAutomato ) {
-			estado = this._estadosAutomato[i]
-			//se existir, trocar todos os nomes de transições.
-			if (estado.alcancavel) {
-				if ( _.isEqual(estado.alcancavel.sort(function(a, b){return a-b}), folhas.sort(function(a, b){return a-b}))) {
-					estadoEquivalente = estado.nome;
+    this._findEquivalent = function(states, newComposition) {
+        for (var i = 0; i < states.length; i++) {
+            var composition = states[i].composition;
+            var isEqual = true;
 
-					delete this._estadosAutomato[nome];
-					break;
-				}
-			}
-		}
+            if (!(composition.hasOwnProperty('L') && newComposition.hasOwnProperty('L'))
+                && !(!composition.hasOwnProperty('L') && !newComposition.hasOwnProperty('L'))) {
+                continue;
+            }
 
-		if (estadoEquivalente) {
-			for( var e in this._estadosAutomato) {
-				estado = this._estadosAutomato[e]
-				for (var l = 0; l < this._alfabeto.length; l++) {
-					letra = this._alfabeto[l]
-					if (estado.transicoes[letra] && estado.transicoes[letra][0] === nome) {
-						estado.transicoes[letra][0] = estadoEquivalente;
-						break;
-					}
-				}
-			}
-			return true;
-		}
-		return false;
-	}
+            for (var j = 0; j < this._alfabeto.length; j++) {
+                var termComposition = composition[this._alfabeto[j]];
+
+                for (var k = 0; k < termComposition.length; k++) {
+                    var newTermComposition = newComposition[this._alfabeto[j]];
+                    isEqual = false;
+
+                    for (var t = 0; t < newTermComposition.length; t++) {
+                        if (newTermComposition[t] === termComposition[k]) {
+                            isEqual = true;
+                            break;
+                        }
+                    }
+
+                    if (!isEqual) {
+                        break;
+                    }
+                }
+
+                if (!isEqual) {
+                    break;
+                }
+            }
+
+            if (isEqual) {
+                return states[i].name;
+            }
+        }
+
+        return undefined;
+    };
+
+    this._gerarEstadosRPN = function (states, start, end) {
+        var created = 0;
+
+        for (var i = 0; i < this._alfabeto.length; i++) {
+            if (states[start].composition[this._alfabeto[i]].length > 0) {
+                var composition = states[start].composition[this._alfabeto[i]];
+                var newComposition = this._initComposition();
+
+                for (var t = 0; t < composition.length; t++) {
+                    newComposition = this._getCompositionUp(this._treeRPN.indexOf(composition[t]), newComposition);
+                }
+
+                var state = this._findEquivalent(states, newComposition);
+
+                if (state === undefined) {
+                    states[start].transitions[this._alfabeto[i]] = 'q' + states.length;
+
+                    states.push({
+                        'name': 'q' + states.length,
+                        'transitions': {},
+                        'composition': newComposition,
+                        'isFinal': Object.keys(newComposition).indexOf('L') >= 0,
+                        'initial': false
+                    });
+
+                    created++;
+                } else {
+                    states[start].transitions[this._alfabeto[i]] = state;
+                }
+            } else {
+                states[start].transitions[this._alfabeto[i]] = '-';
+            }
+        }
+
+        for (var i = end; i < end + created ; i++) {
+            this._gerarEstadosRPN(states, i, states.length);
+        }
+        
+        return states;
+    };
+
+    this._convert = function (states) {
+        var r = {};
+
+        for (var i = 0; i < states.length; i++) {
+            var transitions = {};
+
+            for (var terminal in states[i].transitions) {
+                transitions[terminal] = states[i].transitions[terminal] === '-' ? false : [states[i].transitions[terminal]];
+            }
+
+            r[states[i].name] = {
+                'nome': states[i].name,
+                'id': states[i].name,
+                'transicoes': transitions,
+                'final': states[i].isFinal,
+                'inicial': states[i].initial
+            }
+        }
+
+        return r
+    };
+
+    this.gerarEstadosRPN = function() {
+        var states = [{
+            'name': 'q0',
+            'transitions': {},
+            'composition': this._getCompositionDown(0),
+            'initial': true
+        }];
+
+        states[0]['isFinal'] = Object.keys(states[0].composition).indexOf('L') >= 0;
+
+        this._gerarEstadosRPN(states, 0, states.length);
+
+        return this._convert(states);
+    };
 };
 	

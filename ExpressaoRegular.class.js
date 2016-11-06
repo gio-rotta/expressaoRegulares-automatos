@@ -8,30 +8,66 @@ function ExpressaoRegular () {
 
         if ( checkLetters || /[*?.|(][*?|]/.test(expressao) || /[(][)]/.test(expressao) || /[(]([*?|.\s]|$)/.test(expressao) || (/[|]$/.test(expressao)) ) {
             return false;
-        } else {
-        	if (this.verificadorParenteses(expressao)) {
-        		return true;
-        	} else {
-        		return false;
-        	}
-        }		
-	}
+        }
+
+        return this.verificadorParenteses(expressao);
+	};
 
 	this.verificadorParenteses = function(str){
-	  var pos = str.indexOf("("),
-	      bracket = 0;
-	  var posClose = str.indexOf(")");
-	  if ( pos === -1 && posClose === -1) return true;
-	  if ( pos === -1 && posClose != -1) return false;
+		var counter = 0;
 
-	  for(var x=pos; x<str.length; x++){
-	    var char = str.substr(x, 1);    
-	    
-	    bracket = bracket + (char=="(" ? 1 : (char==")" ? -1 : 0));
+	  for(var i = 0; i < str.length; i++){
+	      counter += (str[i] === '(' ? 1 : (str[i] === ')' ? -1 : 0));
+
+            if (counter < 0)
+	            return false;
 	  }
-	  
-	  if(bracket==0) return true;
-	  return false;
-	}
+
+	  return counter == 0;
+	};
+
+	this.getRPN= function(str) {
+	    var aux = '';
+        var stack = [];
+        var counter = 0;
+
+        for (var i = 0; i < str.length; i++) {
+            switch (str[i]) {
+                case '(':
+                    counter += 1;
+                    stack.push('(');
+                    break;
+                case ')':
+                    while(stack[stack.length - 1] != '(') {
+                        aux = aux + stack.pop();
+                    }
+
+                    counter -= 1;
+                    stack.pop();
+                    break;
+                case '*':
+                case '?':
+                    stack.push(str[i]);
+                    break;
+                case '|':
+                case '.':
+                    if (stack.length > 0 && counter === 0) {
+                        aux = aux + stack.pop();
+                    }
+
+                    stack.push(str[i]);
+                    break;
+                default:
+                    aux = aux + str[i];
+                    break;
+            }
+        }
+
+        while(stack.length > 0) {
+            aux = aux + stack.pop();
+        }
+
+		return aux;
+	};
 };
 	
