@@ -98,8 +98,6 @@ var OperacoesPanelView = Backbone.View.extend({
       }
     }
 
-    console.log(this.automato1)
-
     this.$('.section-interseccao').addClass('hidden');
     this.$('.section-equivalencia').removeClass('hidden');
 
@@ -111,7 +109,6 @@ var OperacoesPanelView = Backbone.View.extend({
     var uniao2 = {};
     var diferenca1 = {};
     var diferenca2 = {};
-    
 
     // Diferenca 1
 
@@ -159,10 +156,8 @@ var OperacoesPanelView = Backbone.View.extend({
 
   executarDeSimone: function(expressao) {
     var deSimone = new DeSimone(expressao);
-    deSimone.construirArvore();
-    deSimone._estadosAutomato['q0'] = { nome: 'q0', id:'q0', inicial: true, transicoes : {}, };
-    var estados = deSimone.gerarEstados('q0');
-    console.log(estados)
+    deSimone.construirArvoreRPN();
+    var estados = deSimone.gerarEstadosRPN('q0');
     var automato = {isAutomato:true, estados:estados, alfabeto:deSimone._alfabeto};
     return automato;
   },
@@ -177,7 +172,7 @@ var OperacoesPanelView = Backbone.View.extend({
       this.$('.er2-validador').text('Expressão Válida!');
       this.$('.er2-validador').removeClass('text-danger').addClass('text-success')
       expressao = $(event.currentTarget).val().replace(/([a-z0-9*?)](?!$|[)*?|]))/g,'$1.');
-      this.expressao1 = expressao;
+      this.expressao2 = expressao;
     }
     this.trigger("new", {});
   },
@@ -192,7 +187,7 @@ var OperacoesPanelView = Backbone.View.extend({
       this.$('.er1-validador').text('Expressão Válida!');
       this.$('.er1-validador').removeClass('text-danger').addClass('text-success')
       expressao = $(event.currentTarget).val().replace(/([a-z0-9*?)](?!$|[)*?|]))/g,'$1.');
-      this.expressao2 = expressao;
+      this.expressao1 = expressao;
     }
     this.trigger("new", {});
   },
