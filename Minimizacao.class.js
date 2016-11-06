@@ -14,7 +14,7 @@ function Minimizacao(estados, alfabeto) {
 		}
 		this._estados = this.eliminarEstadosInacessíveis();
 		this.eliminarEstadosMortos();
-		this.eliminarIndefinicoes();
+		this._estados = this.eliminarIndefinicoes();
 		this.eliminarEstadosEquivalentes();
 		return this._estados;
 	}
@@ -102,7 +102,7 @@ function Minimizacao(estados, alfabeto) {
 
 	this.eliminarIndefinicoes = function() {
 		var counter = 0;
-
+		
 		this._estados['Φ'] = {
           nome: 'Φ',
           id: 'Φ',
@@ -129,6 +129,8 @@ function Minimizacao(estados, alfabeto) {
 		}
 
 		if (counter < 1) delete this._estados['Φ'];
+		
+		return this._estados;
 	}
 
 	this.eliminarEstadosEquivalentes = function() {

@@ -58,18 +58,30 @@ var AutomatoView = Backbone.View.extend({
 
   gerarLinhas: function() {
     var linhas;
-
+    
     for (var estado in this.estados) {
       estado = this.estados[estado];
       var inicial = (estado.inicial)? '->' : '';
       var final = (estado.final)? '*' : '';
       var celulas = '<td class="coluna-nome" >'+inicial+final+estado.nome+'</td>';
-      for (var transicao in estado.transicoes) {
-        transicao = estado.transicoes[transicao][0];
-        if (!transicao) transicao = '-';
-        celulas += '<td>'+transicao+'</td>';
+      
+      for (var terminal in this.alfabeto) {
+        terminal = this.alfabeto[terminal];
+        var transicoes = estado.transicoes[terminal];
+        var selects = '';
+        
+        for (var transicaoIndex in transicoes) {
+          var transicao = transicoes[transicaoIndex];
+          if (!transicao) transicao = '-';
+          var options = '';
+      
+          selects += transicao+' ';
+        }
+
+        celulas += '<td>'+selects+'</td>';
       }
-      linhas += '<tr>'+celulas+'</tr>'
+
+      linhas += '<tr>'+celulas+'</tr>';
     }
     return linhas;
   },
@@ -85,7 +97,7 @@ var AutomatoView = Backbone.View.extend({
       celulas += '<td class="coluna-nome coluna-final" ><input type="checkbox"  class="js-checkbox-final" value="'+estado.id+'" name="final" '+final+'></td>';
       celulas += '<td class="coluna-nome" ><input data-target="'+estado.id+'" type="text" class="js-input-nome-estado" style="width:75px;" value='+estado.nome+'></td>';
       
-      for (var terminal in estado.transicoes) {
+      for (var terminal in this.alfabeto) {
         var transicoes = estado.transicoes[terminal];
         var selects = '';
         

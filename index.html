@@ -84,7 +84,7 @@
 	<body class="trabalho">
 		<ul class="nav nav-tabs">
 			<li><h4 class="title">Trabalho 1 - Manipulação Autômato Finito & Expressão Regular</h4></li>
-			<li role="presentation" data-tab="op-panel" class="js-tab pull-right"><a href="#">Operações</a></li>
+			<li role="presentation" data-tab="lr-panel" class="js-tab pull-right"><a href="#">Operações L.R.</a></li>
 			<li role="presentation" data-tab="af-panel" class="js-tab pull-right"><a href="#">Autômatos Finitos</a></li>
 			<li role="presentation" data-tab="er-panel" class="js-tab active pull-right"><a href="#">Expressões Regulares</a></li>
 		</ul>
@@ -173,50 +173,144 @@
 				</div>
 			</div>
 
-			<div class="panel panel-default main-panel js-operation-panel hidden">
+			<div class="panel panel-default main-panel js-operation-panel js-lr-panel hidden">
 			  <div class="panel-body">
 			  	<div class="row">
-			  		<div class="form-group col-md-12">
-					  	<label for="id_username" class="control-label requiredField">Expressão Regular:</label>
-					    <div class="input-group">
-						  <input type="text" class="js-er-input form-control">
-						  <div class="input-group-btn">
-						    <div class="btn btn-primary">Upload</div>
-						    <div class="btn btn-success disabled">Save</div>
-						  </div>
+					<div class="col-md-6 flex">
+				  		<div class="panel panel-default">
+				  			<div class="panel-heading">Linguagem Regular 1</div>
+				  			<div class="panel-body panel-automato-1">
+
+							    <div class="form-group col-md-12 js-lr1-upload text-center">
+						    		<input class="js-lr1-inputfile" type="file" name="lr1" id="lr1" />
+									<label class="btn btn-primary" for="lr1">Upload Autômato Finito ou Expressão Regular</label>
+									<button class="js-novo-er1 btn btn-success" >Nova Expressão Regular</button>
+								</div>
+				  				<div class="form-group col-md-12 js-er1 hidden">
+								  	<label class="control-label requiredField">Expressão Regular:</label>
+									<input type="text" class="js-er1-input form-control">
+									<div class="col-md-12 er1-validador"></div>
+								</div>
+								<div class="col-md-12 js-tabela-af1 hidden"></div>
+
+				  			</div>
+						</div>
+					</div>
+					<div class="col-md-6 flex">
+				  		<div class="panel panel-default">
+				  			<div class="panel-heading">Linguagem Regular 2</div>
+				  			<div class="panel-body panel-automato-1">
+				  				
+				  				<div class="form-group col-md-12 js-lr2-upload text-center">
+							    	<input class="js-lr2-inputfile" type="file" name="lr2" id="lr2" />
+									<label class="btn btn-primary" for="lr2">Upload Autômato Finito ou Expressão Regular</label>
+									<button class="js-novo-er2 btn btn-success" >Nova Expressão Regular</button>
+								</div>
+				  				<div class="form-group col-md-12 js-er2 hidden">
+								  	<label for="id_username" class="control-label requiredField">Expressão Regular:</label>
+									<input type="text" class="js-er2-input form-control">
+									<div class="col-md-12 er2-validador"></div>
+								</div>
+								<div class="col-md-12 js-tabela-af2 hidden"></div>
+
+				  			</div>
 						</div>
 					</div>
 				</div>
-				<div class="row">
-					<div class="er-validador"></div>
+				<div class="row text-center">
+					<button class="js-interseccao disabled btn btn-primary" >Gerar Intersecção</button>
+					<button class="js-equivalencia disabled btn btn-primary" >Verificar Equivalência</button>
 				</div>
-				<div class="row">
-					<div class="col-md-4"></div>
-					<div class="col-md-4">
-						<div class="btn btn-primary">Converter para Autômato Finito usando algoritmo de De Simone</div>
-					</div>
-					<div class="col-md-4"></div>
-				</div>
-				<div class="row flex">
+				<div class="section-interseccao hidden">					
+					<div class="row flex">
 						<div class="col-md-6 flex">
-					  		<div class="panel panel-default">
-					  			<div class="panel-heading">Tabela Autômato</div>
-					  			<div class="panel-body"></div>
+							<div class="panel panel-default panel-af2-complemento">
+						  		<div class="panel-heading">Complemento AF1</div>
+						  		<div class="panel-body js-af1-complemento">
+						  		</div>
 							</div>
 						</div>
 						<div class="col-md-6 flex">
-					  		<div class="panel panel-default">
-					  			<div class="panel-heading">Autômato Finito</div>
-					  			<div class="panel-body"></div>
+							<div class="panel panel-default panel-af2-complemento">
+						  		<div class="panel-heading">Complemento AF2</div>
+						  		<div class="panel-body js-af2-complemento">
+						  		</div>
 							</div>
 						</div>
-				</div>
-				<div class="row">
-					<div class="col-md-12">
-						<div class="btn btn-danger pull-right">Salvar Autômato Finito</div>
+					</div>
+					<div class="row flex">
+						<div class="col-md-12 flex">
+							<div class="panel panel-default panel-af1-af2-uniao">
+						  		<div class="panel-heading">União AF1' com AF2'</div>
+						  		<div class="panel-body js-af1-af2-uniao">
+						  		</div>
+							</div>
+						</div>
+					</div>
+					<div class="row flex">
+						<div class="col-md-12 flex">
+							<div class="panel panel-default panel-af1-interseccao">
+						  		<div class="panel-heading">Intersecção entre AF1 e AF2</div>
+						  		<div class="panel-body js-af1-interseccao">
+						  		</div>
+							</div>
+						</div>
 					</div>
 				</div>
-			  </div>
+				<div class="section-equivalencia hidden">					
+					<div class="row flex">
+						<div class="col-md-6 flex">
+							<div class="panel panel-default panel-af2-complemento">
+						  		<div class="panel-heading">Complemento AF1</div>
+						  		<div class="panel-body js-af1-complemento">
+						  		</div>
+							</div>
+						</div>
+						<div class="col-md-6 flex">
+							<div class="panel panel-default panel-af2-complemento">
+						  		<div class="panel-heading">União ~AF1 e AF2</div>
+						  		<div class="panel-body js-uniao-1">
+						  		</div>
+							</div>
+						</div>
+					</div>
+					<div class="row flex">
+						<div class="col-md-12 flex">
+							<div class="panel panel-default panel-af1-af2-uniao">
+						  		<div class="panel-heading">Complemento da união ~AF1 e AF2 (Diferença)</div>
+						  		<div class="panel-body js-diferenca-1">
+						  		</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row flex">
+						<div class="col-md-6 flex">
+							<div class="panel panel-default panel-af2-complemento">
+						  		<div class="panel-heading">Complemento AF2</div>
+						  		<div class="panel-body js-af2-complemento">
+						  		</div>
+							</div>
+						</div>
+						<div class="col-md-6 flex">
+							<div class="panel panel-default panel-af2-complemento">
+						  		<div class="panel-heading">União AF1 e ~AF2</div>
+						  		<div class="panel-body js-uniao-2">
+						  		</div>
+							</div>
+						</div>
+					</div>
+					<div class="row flex">
+						<div class="col-md-12 flex">
+							<div class="panel panel-default panel-af1-af2-uniao">
+						  		<div class="panel-heading">Complemento da união AF1 e ~AF2 (Diferença)</div>
+						  		<div class="panel-body js-diferenca-2">
+						  		</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
 			</div>
 		</div>
 
@@ -276,9 +370,11 @@
 		<script src="DeSimone.class.js"></script>
 		<script src="Minimizacao.class.js"></script>
 		<script src="Determinizacao.class.js"></script>
+		<script src="OperacoesFormais.class.js"></script>
 		<!-- Views -->
 		<script src="view/automato.view.js"></script>
 		<script src="view/automatoPanel.view.js"></script>
+		<script src="view/operacoesPanel.view.js"></script>
 		<script src="view/regexPanel.view.js"></script>
 		<script src="view/t1.view.js"></script>
 		<script type="text/javascript">

@@ -61,6 +61,10 @@ function Determinizacao(estados, alfabeto) {
 							}
 						}
 
+						if (!transicoes) {
+							estados[estado].transicoes[terminal] = [];
+						}
+
 						if (!(transicoes[0] == null)) {
 						
 							if (!listaTransicoes[terminal]) {
@@ -78,7 +82,7 @@ function Determinizacao(estados, alfabeto) {
 				console.log(terminal)
 				terminal = alfabeto[terminal];
 
-				if (!novosEstados[JSON.stringify(listaTransicoes[terminal])]) {
+				if (!novosEstados[JSON.stringify(listaTransicoes[terminal])] && listaTransicoes[terminal]) {
 					criarEstadosDeterministicos(JSON.stringify(listaTransicoes[terminal]));
 				}
 
