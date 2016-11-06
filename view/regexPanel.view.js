@@ -50,7 +50,7 @@ var RegexPanelView = Backbone.View.extend({
         // serialize JSON directly to a file
         var name = $('.js-nome-automato').val();
         console.log(JSON.stringify(this.automato))
-        this.download(name+'.json', JSON.stringify(this.automato));
+        this.download(name+'.AutomatoFinito.json', JSON.stringify(this.automato));
         $(document.body).append($('#saveAutomatoModal').modal('hide'));
     },
 
@@ -69,7 +69,7 @@ var RegexPanelView = Backbone.View.extend({
     salvarRegex: function(event) {
         // serialize JSON directly to a file
         var name = $('.js-nome-regex').val();
-        this.download(name+'.json', JSON.stringify({isRegex:true, regex: this.expressao}));
+        this.download(name+'.expressaoRegular.json', JSON.stringify({isRegex:true, regex: this.expressao}));
         $(document.body).append($('#saveRegexModal').modal('hide'));
     },
 

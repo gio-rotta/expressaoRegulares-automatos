@@ -102,7 +102,7 @@ var AutomatoPanelView = Backbone.View.extend({
   salvarAutomato: function(event) {
     // serialize JSON directly to a file
     var name = $('.js-nome-automato').val();
-    this.download(name+'.json', JSON.stringify({isAutomato:true, estados:this.automatoView.estados, alfabeto:this.automatoView.alfabeto}));
+    this.download(name+'.automatoFinito.json', JSON.stringify({isAutomato:true, estados:this.automatoView.estados, alfabeto:this.automatoView.alfabeto}));
     $(document.body).append(this.$('#saveAutomatoModal').modal('hide'));
   },
 
