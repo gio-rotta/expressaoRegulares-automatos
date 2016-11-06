@@ -76,6 +76,8 @@ function DeSimone (expressao) {
             case '.':
                 return 2*(index + 1);
                 break;
+            default:
+                return -1;
         }
     };
 
@@ -104,6 +106,8 @@ function DeSimone (expressao) {
                     break;
                 default:
                     var leaf = this._treeRPN[next];
+                    console.log(this._treeRPN);
+                    console.log(next);
 
                     if (composition[leaf[leaf.length - 1]].indexOf(leaf) < 0) {
                         composition[leaf[leaf.length - 1]].push(leaf);
@@ -156,6 +160,11 @@ function DeSimone (expressao) {
     this._getCompositionUp = function(start, newComposition) {
         var next = this._getNextUp(start%2 === 0 ? this._getNextRight(start) : Math.floor((start - 1)/2));
         var composition = newComposition ? newComposition : this._initComposition();
+
+        if(next == -1) {
+            composition['isFinal'] = true;
+            return composition;
+        }
 
         return this._getCompositionDown(next, composition);
     };
