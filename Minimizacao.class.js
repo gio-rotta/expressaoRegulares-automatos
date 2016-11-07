@@ -108,7 +108,7 @@ function Minimizacao(estados, alfabeto) {
 		for (var estado in this._estados) {
 			for (var terminal in this._estados[estado].transicoes) {
 				if (_.contains(estadosParaDeletar, this._estados[estado].transicoes[terminal][0])) {
-					this._estados[estado].transicoes[transicoes][0] = false;
+					this._estados[estado].transicoes[terminal][0] = false;
 				}
 			}
 		}
