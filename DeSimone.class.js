@@ -119,15 +119,26 @@ function DeSimone (expressao) {
                         next = waiting.pop();
 
                         if (this._treeRPN[next] == '*' || this._treeRPN[next] == '?') {
-                            if (next === 0 || next%2 === 0) {
+                            if (next % 2 === 0) {
                                 if (this._getNextRight(next) < 0) {
                                     composition['L'] = true;
                                     endLoop = true;
+                                    next = -1;
                                 } else {
                                     next = this._getNextRight(next);
+
+                                    if (this._treeRPN[next] == '*' || this._treeRPN[next] == '?') {
+                                        if(waiting.indexOf(next) >= 0) {
+                                            endLoop = true;
+                                            composition['L'] = true;
+                                        }
+                                    } else if(next === -1) {
+                                        endLoop = true;
+                                        composition['L'] = true;
+                                    }
                                 }
                             } else {
-                                next = this._getNextUp(Math.floor((next - 1)/2));
+                                next = this._getNextUp(Math.floor((next - 1) / 2));
 
                                 if (next === -1) {
                                     composition['L'] = true;
@@ -162,7 +173,7 @@ function DeSimone (expressao) {
         var composition = newComposition ? newComposition : this._initComposition();
 
         if(next == -1) {
-            composition['isFinal'] = true;
+            composition['L'] = true;
             return composition;
         }
 
