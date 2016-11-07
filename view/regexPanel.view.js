@@ -69,7 +69,7 @@ var RegexPanelView = Backbone.View.extend({
     salvarRegex: function(event) {
         // serialize JSON directly to a file
         var name = $('.js-nome-regex').val();
-        this.download(name+'.expressaoRegular.json', JSON.stringify({isRegex:true, regex: this.expressao}));
+        this.download(name+'.expressaoRegular.json', JSON.stringify({isRegex:true, regex: this.$('.js-er-input').val()}));
         $(document.body).append($('#saveRegexModal').modal('hide'));
     },
 
