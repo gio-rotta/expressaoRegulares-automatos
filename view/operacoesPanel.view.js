@@ -52,32 +52,42 @@ var OperacoesPanelView = Backbone.View.extend({
     this.$('.section-interseccao').removeClass('hidden');
     this.$('.section-equivalencia').addClass('hidden');
 
+    var automato1 = jQuery.extend(true, {}, this.automato1);
+    var automato2 = jQuery.extend(true, {}, this.automato2);
+    var uniao1 = {};
+    var complementoUniao = {};
+
+    this.$('.section-interseccao').removeClass('hidden');
+    this.$('.section-equivalencia').addClass('hidden');
+
     //gerar complemento de af1
-    this.automato1.estados = this.operacoesFormais.complemento(this.automato1.estados, this.automato1.alfabeto);
-    this.automato1View = new AutomatoView(this.automato1);
-    this.automato1View.gerarTabela();
-    this.$el.find('.section-interseccao').find('.js-af1-complemento').html(this.automato1View.el);
+    automato1.estados = this.operacoesFormais.complemento(automato1.estados, automato1.alfabeto);
+    var automato1View = new AutomatoView(automato1);
+    automato1View.gerarTabela();
+    this.$el.find('.section-interseccao').find('.js-af1-complemento').html(automato1View.el);
 
     //gerar complemento de af2
-    this.automato2.estados = this.operacoesFormais.complemento(this.automato2.estados, this.automato2.alfabeto);
+    automato2.estados = this.operacoesFormais.complemento(automato2.estados, automato2.alfabeto);
     this.$('.panel-af2-complemento').removeClass('hidden');
-    this.automato2View = new AutomatoView(this.automato2);
-    this.automato2View.gerarTabela();
-    this.$el.find('.section-interseccao').find('.js-af2-complemento').html(this.automato2View.el);
+    var automato2View = new AutomatoView(automato2);
+    automato2View.gerarTabela();
+    this.$el.find('.section-interseccao').find('.js-af2-complemento').html(automato2View.el);
 
     //gerar uniao de ~af1 e ~af2
-    this.automato1 = this.operacoesFormais.uniao(this.automato1.estados, this.automato1.alfabeto, this.automato2.estados, this.automato2.alfabeto)
+    uniao1 = this.operacoesFormais.uniao(automato1.estados, automato1.alfabeto, automato2.estados, automato2.alfabeto);
     this.$('.panel-af1-af2-uniao').removeClass('hidden');
-    this.automato1View = new AutomatoView(this.automato1);
-    this.automato1View.gerarTabela();
-    this.$el.find('.section-interseccao').find('.js-af1-af2-uniao').html(this.automato1View.el);
+    var uniao1View = new AutomatoView(uniao1);
+    uniao1View.gerarTabela();
+    this.$el.find('.section-interseccao').find('.js-af1-af2-uniao').html(uniao1View.el);
 
     //complemento uniao
-    this.automato1.estados = this.operacoesFormais.complemento(this.automato1.estados, this.automato1.alfabeto);
+    complementoUniao.alfabeto = uniao1.alfabeto;
+    complementoUniao.estados = this.operacoesFormais.complemento(uniao1.estados, uniao1.alfabeto);
     this.$('.panel-af1-interseccao').removeClass('hidden');
-    this.automato1View = new AutomatoView(this.automato1);
-    this.automato1View.gerarTabela();
-    this.$el.find('.section-interseccao').find('.js-af1-interseccao').html(this.automato1View.el);
+    complementoView = new AutomatoView(complementoUniao);
+    complementoView.gerarTabela();
+    this.$el.find('.section-interseccao').find('.js-af1-interseccao').html(complementoView.el);
+
 
   },
 
@@ -290,3 +300,5 @@ var OperacoesPanelView = Backbone.View.extend({
   },
 
 });
+
+
