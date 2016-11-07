@@ -155,7 +155,8 @@ var OperacoesPanelView = Backbone.View.extend({
   },
 
   executarDeSimone: function(expressao) {
-    var deSimone = new DeSimone(expressao);
+    var expressaoRPN =  this.expressaoRegular.getRPN(expressao);
+    var deSimone = new DeSimone(expressaoRPN);
     deSimone.construirArvoreRPN();
     var estados = deSimone.gerarEstadosRPN('q0');
     var automato = {isAutomato:true, estados:estados, alfabeto:deSimone._alfabeto};
@@ -163,8 +164,11 @@ var OperacoesPanelView = Backbone.View.extend({
   },
 
   verificarER2: function(event) {
-    var expressao = $(event.currentTarget).val();
     var eValido = this.expressaoRegular.verificarExpressao($(event.currentTarget).val());
+    expressao = $(event.currentTarget).val().replace(/([a-z0-9*?)](?!$|[)*?|]))/g,'$1.');
+    expressao = expressao.replace(/([a-z0-9]\*)/g,'($1)');
+    expressao = expressao.replace(/([a-z0-9]\?)/g,'($1)');
+
     if (!eValido || expressao === '') {
       this.$('.er2-validador').text('Expressão Inválida');
       this.$('.er2-validador').addClass('text-danger').removeClass('text-success');
@@ -172,15 +176,17 @@ var OperacoesPanelView = Backbone.View.extend({
     } else {
       this.$('.er2-validador').text('Expressão Válida!');
       this.$('.er2-validador').removeClass('text-danger').addClass('text-success')
-      expressao = $(event.currentTarget).val().replace(/([a-z0-9*?)](?!$|[)*?|]))/g,'$1.');
       this.expressao2 = expressao;
     }
     this.trigger("new", {});
   },
 
   verificarER1: function(event) {
-    var expressao = $(event.currentTarget).val();
     var eValido = this.expressaoRegular.verificarExpressao($(event.currentTarget).val());
+    expressao = $(event.currentTarget).val().replace(/([a-z0-9*?)](?!$|[)*?|]))/g,'$1.');
+    expressao = expressao.replace(/([a-z0-9]\*)/g,'($1)');
+    expressao = expressao.replace(/([a-z0-9]\?)/g,'($1)');
+
     if (!eValido || expressao === '') {
       this.$('.er1-validador').text('Expressão Inválida');
       this.$('.er1-validador').addClass('text-danger').removeClass('text-success');
@@ -188,7 +194,6 @@ var OperacoesPanelView = Backbone.View.extend({
     } else {
       this.$('.er1-validador').text('Expressão Válida!');
       this.$('.er1-validador').removeClass('text-danger').addClass('text-success')
-      expressao = $(event.currentTarget).val().replace(/([a-z0-9*?)](?!$|[)*?|]))/g,'$1.');
       this.expressao1 = expressao;
     }
     this.trigger("new", {});

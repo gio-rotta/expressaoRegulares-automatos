@@ -6,15 +6,16 @@ var SentencaPanelView = Backbone.View.extend({
     "change .js-lr-inputfile": "lrSelecionado",
     "click .js-novo-er" : "novoEr",
     "keyup .js-er-input" : "verificarER",
-    "keyup .js-sentenca" : "verificarSentenca",
-    "keyup .js-n-sentencas" : "habilitarBotaoGerado",
+    "keyup .js-sentenca" : "habilitarBotaoVerificador",
+    "click .js-verificar-sentenca" : "verificarSentenca",
+    "keyup .js-n-sentencas" : "habilitarBotaoGerador",
     "click .js-gerar-sentencas" : "gerarSentencas",
   },
   
   initialize: function(options) {
 
     this.expressaoRegular = new ExpressaoRegular();
-    this.operacoesFormais = new OperacoesFormais();
+    this.reconhecedorSentencas = new ReconhecedorSentencas();
     this.expressao = false;
     this.automato = false;
     this.automato1View = false;
@@ -24,7 +25,8 @@ var SentencaPanelView = Backbone.View.extend({
   }, 
 
   executarDeSimone: function(expressao) {
-    var deSimone = new DeSimone(expressao);
+    var expressaoRPN =  this.expressaoRegular.getRPN(expressao);
+    var deSimone = new DeSimone(expressaoRPN);
     deSimone.construirArvoreRPN();
     var estados = deSimone.gerarEstadosRPN('q0');
     var automato = {isAutomato:true, estados:estados, alfabeto:deSimone._alfabeto};
@@ -32,8 +34,12 @@ var SentencaPanelView = Backbone.View.extend({
   },
 
   verificarER: function(event) {
-    var expressao = $(event.currentTarget).val();
+
     var eValido = this.expressaoRegular.verificarExpressao($(event.currentTarget).val());
+    expressao = $(event.currentTarget).val().replace(/([a-z0-9*?)](?!$|[)*?|]))/g,'$1.');
+    expressao = expressao.replace(/([a-z0-9]\*)/g,'($1)');
+    expressao = expressao.replace(/([a-z0-9]\?)/g,'($1)');
+
     if (!eValido || expressao === '') {
       this.$('.er-validador').text('Expressão Inválida');
       this.$('.er-validador').addClass('text-danger').removeClass('text-success');
@@ -41,23 +47,29 @@ var SentencaPanelView = Backbone.View.extend({
     } else {
       this.$('.er-validador').text('Expressão Válida!');
       this.$('.er-validador').removeClass('text-danger').addClass('text-success')
-      expressao = $(event.currentTarget).val().replace(/([a-z0-9*?)](?!$|[)*?|]))/g,'$1.');
       this.expressao = expressao;
     }
     this.trigger("new", {});
   },
 
   verificarSentenca: function(event) {
-    var expressao = $(event.currentTarget).val();
-    var eValido = this.verificador.verificarSentenca();
-    if (!eValido || expressao === '') {
+     if (!this.automato) {
+      if (this.expressao) {
+        this.automato = this.executarDeSimone(this.expressao);
+      } else {
+        alert('Insira uma representação para a linguagem regular 1!');
+      }
+    }
+
+    var sentenca = this.$('.js-sentenca').val();
+    var eValido = this.reconhecedorSentencas.verificarSentenca(this.automato.estados, this.automato.alfabeto, sentenca);
+    if (!eValido || sentenca === '') {
       this.$('.sentenca-validador').text('Expressão Inválida');
       this.$('.sentenca-validador').addClass('text-danger').removeClass('text-success');
     } else {
       this.$('.sentenca-validador').text('Expressão Válida!');
       this.$('.sentenca-validador').removeClass('text-danger').addClass('text-success');
     }
-    this.trigger("new", {});
   },
 
   gerarSentencas: function() {
@@ -65,9 +77,15 @@ var SentencaPanelView = Backbone.View.extend({
     this.$('.js-container-sentencas').html(listaSentencas);
   },
 
-  habilitarBotaoGerado: function() {
+  habilitarBotaoGerador: function() {
     if (this.$('.js-n-sentencas').val() != '') {
       this.$('.js-gerar-sentencas').toggleClass('disabled', false);
+    }
+  },
+
+  habilitarBotaoVerificador: function() {
+    if (this.$('.js-sentenca').val() != '') {
+      this.$('.js-verificar-sentenca').toggleClass('disabled', false);
     }
   },
 

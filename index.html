@@ -344,8 +344,13 @@
 				  			<div class="panel-body panel-automato-1">
 
 				  				<div class="form-group col-md-12">
-								  	<label class="control-label requiredField">Sentença:</label>
-									<input type="text" class="js-sentenca form-control" disabled>
+				  					<label class="control-label requiredField">Sentença:</label>
+								  	<div class="input-group">
+										<input type="text" class="js-sentenca form-control" disabled>
+										<div class="input-group-btn">
+											<div class="btn btn-success js-verificar-sentenca disabled">Verificar</div>
+										</div>
+									</div>
 									<div class="col-md-12 sentenca-validador"></div>
 								</div>
 
@@ -434,6 +439,7 @@
 		<script src="Minimizacao.class.js"></script>
 		<script src="Determinizacao.class.js"></script>
 		<script src="OperacoesFormais.class.js"></script>
+		<script src="ReconhecedorSentencas.class.js"></script>
 		<!-- Views -->
 		<script src="view/automato.view.js"></script>
 		<script src="view/automatoPanel.view.js"></script>
