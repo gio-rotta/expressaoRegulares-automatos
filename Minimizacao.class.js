@@ -1,7 +1,7 @@
 function Minimizacao(estados, alfabeto) {
 
     this._alfabeto = alfabeto;
-    this._estados = estados;
+    this._estados = jQuery.extend(true, {}, estados);
     this._alcancaveis = [];
     this._vivos = [];
     this._listaDeLetras = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','X','W','Y','Z'];
@@ -45,6 +45,7 @@ function Minimizacao(estados, alfabeto) {
 		var alcancaveis = this._alcancaveis;
 		var estados = this._estados;
 
+		// percorrer estados alcançaveis
 		function percorrerEstadosAlcancaveis(estadoPai) {
 			estadoPai = estados[estadoPai];
 			for (var terminal in estadoPai.transicoes) {
@@ -60,6 +61,8 @@ function Minimizacao(estados, alfabeto) {
 		percorrerEstadosAlcancaveis(estadoInicial.id);
 		var estadosParaDeletar = _.difference(Object.keys(estados), this._alcancaveis);
 		var novosEstados = {};
+
+		// eliminar estados inacessíveis
 		for (var i = 0; i < this._alcancaveis.length; i++) {
 			novosEstados[this._alcancaveis[i]] = estados[this._alcancaveis[i]]
 		}
@@ -77,6 +80,7 @@ function Minimizacao(estados, alfabeto) {
 			vivos.push(estadoFinal.id);
 		}
 
+		// percorrer estados vivos
 		function percorrerEstadosVivos() {
 			for (var estadoIndex in estados) {
 				var estado = estados[estadoIndex];
@@ -95,8 +99,18 @@ function Minimizacao(estados, alfabeto) {
 		percorrerEstadosVivos();
 		var estadosParaDeletar = _.difference(Object.keys(this._estados), this._vivos);
 
+		// eliminar estados mortos
 		for (var i = 0; i < estadosParaDeletar.length; i++) {
 			delete this._estados[estadosParaDeletar[i]];
+		}
+
+		// eliminar transições mortas
+		for (var estado in this._estados) {
+			for (var terminal in this._estados[estado].transicoes) {
+				if (_.contains(estadosParaDeletar, this._estados[estado].transicoes[terminal][0])) {
+					this._estados[estado].transicoes[transicoes][0] = false;
+				}
+			}
 		}
 	}
 
