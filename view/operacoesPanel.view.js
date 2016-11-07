@@ -168,6 +168,7 @@ var OperacoesPanelView = Backbone.View.extend({
     if (!eValido || expressao === '') {
       this.$('.er2-validador').text('Expressão Inválida');
       this.$('.er2-validador').addClass('text-danger').removeClass('text-success');
+      this.expressao = false;
     } else {
       this.$('.er2-validador').text('Expressão Válida!');
       this.$('.er2-validador').removeClass('text-danger').addClass('text-success')
@@ -183,6 +184,7 @@ var OperacoesPanelView = Backbone.View.extend({
     if (!eValido || expressao === '') {
       this.$('.er1-validador').text('Expressão Inválida');
       this.$('.er1-validador').addClass('text-danger').removeClass('text-success');
+      this.expressao = false;
     } else {
       this.$('.er1-validador').text('Expressão Válida!');
       this.$('.er1-validador').removeClass('text-danger').addClass('text-success')

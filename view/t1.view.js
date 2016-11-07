@@ -21,6 +21,8 @@ var TrabalhoView = Backbone.View.extend({
       this.panelView = new AutomatoPanelView();
     } else if (target == 'lr-panel') {
       this.panelView = new OperacoesPanelView();
+    } else if (target == 'sentenca-panel') {
+      this.panelView = new SentencaPanelView();
     }
 
   },
