@@ -64,18 +64,13 @@ function DeSimone (expressao) {
             case '?':
                 return index%2 === 0 ? -1 : Math.floor((index - 1)/2);
             case '|':
-                while (this._treeRPN[index] === '*' || this._treeRPN[index] === '|') {
+                while (this._treeRPN[index] === '.' || this._treeRPN[index] === '|') {
                     index = 2*(index + 1);
-                }
-
-                if (this._treeRPN[index] === '?' || this._treeRPN[index] === '*') {
-                    return -1;
                 }
 
                 return this._getNextRight(index);
             case '.':
                 return 2*(index + 1);
-                break;
             default:
                 return -1;
         }
@@ -106,8 +101,6 @@ function DeSimone (expressao) {
                     break;
                 default:
                     var leaf = this._treeRPN[next];
-                    console.log(this._treeRPN);
-                    console.log(next);
 
                     if (composition[leaf[leaf.length - 1]].indexOf(leaf) < 0) {
                         composition[leaf[leaf.length - 1]].push(leaf);

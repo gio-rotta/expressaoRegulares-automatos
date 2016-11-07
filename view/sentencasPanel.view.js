@@ -73,7 +73,17 @@ var SentencaPanelView = Backbone.View.extend({
   },
 
   gerarSentencas: function() {
-    var listaSentencas = gerarSentencas();
+    if (this.expressao) {
+      this.automato = this.executarDeSimone(this.expressao);
+    } else {
+      alert('Insira uma representação para a linguagem regular 1!');
+    }
+
+    var listaSentencas = this.reconhecedorSentencas.gerarSentencas(this.$('.js-n-sentencas').val(), this.automato);
+    listaSentencas = listaSentencas.map(function (current) {
+      return "<p>" + current + "</p>"
+    });
+
     this.$('.js-container-sentencas').html(listaSentencas);
   },
 

@@ -42,4 +42,42 @@ function ReconhecedorSentencas () {
         }
 	}
 
+	this.gerarSentencas = function (n, automato) {
+	    var strings = [[{'q0': {'string': ''}}]];
+        var ret = [];
+
+	    for (var i = 0; i < n; i++) {
+            var current = strings[i];
+            var next = [];
+
+            for(var k = 0; k < current.length; k++) {
+                var state = Object.keys(current[k])[0];
+
+                for (var j = 0; j < automato.alfabeto.length; j++) {
+                    var nextState = automato.estados[state].transicoes[automato.alfabeto[j]];
+
+                    if(nextState) {
+                        var transition = {};
+                        transition[nextState] = {'string': ''};
+                        transition[nextState]['string'] = current[k][state].string + automato.alfabeto[j];
+                        next.push(transition);
+                    }
+                }
+            }
+
+            strings.push(next)
+        }
+
+        for (var i = 0; i < strings[n].length; i++) {
+            var transition = strings[n][i];
+            var state = Object.keys(transition)[0];
+
+            if(automato.estados[state].final) {
+                ret.push(transition[state]['string']);
+            }
+        }
+
+        return ret;
+    }
+
 }
