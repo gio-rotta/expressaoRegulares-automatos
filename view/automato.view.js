@@ -98,9 +98,10 @@ var AutomatoView = Backbone.View.extend({
       celulas += '<td class="coluna-nome" ><input data-target="'+estado.id+'" type="text" class="js-input-nome-estado" style="width:75px;" value='+estado.nome+'></td>';
       
       for (var terminal in this.alfabeto) {
+        var terminal = this.alfabeto[terminal];
         var transicoes = estado.transicoes[terminal];
         var selects = '';
-        
+  
         for (var transicaoIndex in transicoes) {
           var transicao = transicoes[transicaoIndex];
           if (!transicao) transicao = '-';
