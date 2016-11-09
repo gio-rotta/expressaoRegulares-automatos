@@ -7,7 +7,9 @@ function OperacoesFormais () {
 
 		var ehDeterministico = determinizador.verificarDeterminismo();
 		if (!ehDeterministico) {
-			estados = determinizador.determinizarAutomato();
+			var automato = determinizador.determinizarAutomato();
+			estados = automato.estados;
+			alfabeto = automato.alfabeto;
 		}
 
 		// completar automato

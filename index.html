@@ -381,6 +381,27 @@
 				</div>
 			</div>
 		</div>
+	</div>
+
+		<div class="modal fade" id="saveAutomatoModal" tabindex="-1" role="dialog">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h4 class="modal-title">Deseja salvar o automato?</h4>
+		      </div>
+		      <div class="modal-body">
+				  	<label for="salvar" class="control-label requiredField">Escolha o nome do automato:</label>
+				    <div class="input-group col-md-12">
+					  <input type="text" class="js-nome-automato form-control">
+					</div>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn js-fechar-modal-automato btn-default" data-dismiss="modal">Fechar</button>
+		        <button type="button" class="btn js-salvar-automato btn-primary">Salvar</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
 
 		<div class="modal fade" id="saveRegexModal" tabindex="-1" role="dialog">
 		  <div class="modal-dialog" role="document">
@@ -402,25 +423,7 @@
 		  </div>
 		</div>
 
-		<div class="modal fade" id="saveAutomatoModal" tabindex="-1" role="dialog">
-		  <div class="modal-dialog" role="document">
-		    <div class="modal-content">
-		      <div class="modal-header">
-		        <h4 class="modal-title">Deseja salvar o automato?</h4>
-		      </div>
-		      <div class="modal-body">
-				  	<label for="salvar" class="control-label requiredField">Escolha o nome do automato:</label>
-				    <div class="input-group col-md-12">
-					  <input type="text" class="js-nome-automato form-control">
-					</div>
-		      </div>
-		      <div class="modal-footer">
-		        <button type="button" class="btn js-fechar-modal-automato btn-default" data-dismiss="modal">Fechar</button>
-		        <button type="button" class="btn js-salvar-automato btn-primary">Salvar</button>
-		      </div>
-		    </div>
-		  </div>
-		</div>
+		
 
 		<!-- Vendor -->
 		<script src="resources/jquery-1.12.3.min.js"></script>
