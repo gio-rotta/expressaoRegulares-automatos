@@ -2,7 +2,6 @@ function Determinizacao(estados, alfabeto) {
 
     this._alfabeto = alfabeto;
     this._estados = jQuery.extend(true, {}, estados);
-    this._listaDeLetras = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','X','W','Y','Z'];
 
 	this.determinizarAutomato = function() {
 		// verificar se autômato é determinístico
