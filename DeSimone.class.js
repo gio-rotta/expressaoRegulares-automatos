@@ -62,13 +62,13 @@ function DeSimone (expressao) {
             case '*':
                 return index;
             case '?':
-                return index%2 === 0 ? -1 : Math.floor((index - 1)/2);
+                return this._getNextUp(index%2 === 0 ? this._getNextRight(index) : Math.floor((index - 1)/2));
             case '|':
                 while (this._treeRPN[index] === '.' || this._treeRPN[index] === '|') {
                     index = 2*(index + 1);
                 }
 
-                return this._getNextRight(index);
+                return this._getNextUp(this._getNextRight(index));
             case '.':
                 return 2*(index + 1);
             default:
@@ -120,15 +120,13 @@ function DeSimone (expressao) {
                                 } else {
                                     next = this._getNextRight(next);
 
-                                    if (this._treeRPN[next] == '*' || this._treeRPN[next] == '?') {
-                                        if(waiting.indexOf(next) >= 0) {
-                                            endLoop = true;
-                                            composition['L'] = true;
-                                        }
-                                    } else if(next === -1) {
+                                    if ((waiting.indexOf(next) >= 0 && (this._treeRPN[next] == '*' || this._treeRPN[next] == '?')) || next == -1) {
                                         endLoop = true;
                                         composition['L'] = true;
+                                    } else {
+                                        next = this._getNextUp(next);
                                     }
+
                                 }
                             } else {
                                 next = this._getNextUp(Math.floor((next - 1) / 2));
@@ -158,7 +156,7 @@ function DeSimone (expressao) {
             parent = Math.floor((index - 1)/2);
         }
 
-        return Math.floor((Math.floor((index - 1)/2) - 1)/2);
+        return Math.floor((parent - 1)/2);
     };
 
     this._getCompositionUp = function(start, newComposition) {
@@ -185,6 +183,11 @@ function DeSimone (expressao) {
 
             for (var j = 0; j < this._alfabeto.length; j++) {
                 var termComposition = composition[this._alfabeto[j]];
+
+                if (termComposition.length !== newComposition[this._alfabeto[j]].length) {
+                    isEqual = false;
+                    break;
+                }
 
                 for (var k = 0; k < termComposition.length; k++) {
                     var newTermComposition = newComposition[this._alfabeto[j]];
