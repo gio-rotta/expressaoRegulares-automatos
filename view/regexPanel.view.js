@@ -91,10 +91,7 @@ var RegexPanelView = Backbone.View.extend({
     verificarER: function(event) {
         // adicionar concatenação a expressão
         var eValido = this.expressaoRegular.verificarExpressao($(event.currentTarget).val());
-        expressao = $(event.currentTarget).val().replace(/([a-z0-9*?)](?!$|[)*?|]))/g,'$1.');
-        expressao = expressao.replace(/([a-z0-9]\*)/g,'($1)');
-        expressao = expressao.replace(/([a-z0-9]\?)/g,'($1)');
-        console.log(expressao);
+        expressao = this.expressaoRegular.inserirConcatenacao($(event.currentTarget).val());
 
         if (!eValido || expressao === '') {
             this.$('.js-save-er').toggleClass('disabled', true);

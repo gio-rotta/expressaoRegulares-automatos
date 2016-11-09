@@ -175,9 +175,7 @@ var OperacoesPanelView = Backbone.View.extend({
 
   verificarER2: function(event) {
     var eValido = this.expressaoRegular.verificarExpressao($(event.currentTarget).val());
-    expressao = $(event.currentTarget).val().replace(/([a-z0-9*?)](?!$|[)*?|]))/g,'$1.');
-    expressao = expressao.replace(/([a-z0-9]\*)/g,'($1)');
-    expressao = expressao.replace(/([a-z0-9]\?)/g,'($1)');
+    expressao = this.expressaoRegular.inserirConcatenacao($(event.currentTarget).val());
 
     if (!eValido || expressao === '') {
       this.$('.er2-validador').text('Expressão Inválida');
@@ -193,9 +191,7 @@ var OperacoesPanelView = Backbone.View.extend({
 
   verificarER1: function(event) {
     var eValido = this.expressaoRegular.verificarExpressao($(event.currentTarget).val());
-    expressao = $(event.currentTarget).val().replace(/([a-z0-9*?)](?!$|[)*?|]))/g,'$1.');
-    expressao = expressao.replace(/([a-z0-9]\*)/g,'($1)');
-    expressao = expressao.replace(/([a-z0-9]\?)/g,'($1)');
+    expressao = this.expressaoRegular.inserirConcatenacao($(event.currentTarget).val());
 
     if (!eValido || expressao === '') {
       this.$('.er1-validador').text('Expressão Inválida');
@@ -278,7 +274,7 @@ var OperacoesPanelView = Backbone.View.extend({
           this.$el.find('.js-er2').removeClass('hidden');
           this.$el.find('.js-tabela-af2').addClass('hidden');
           this.$el.find('.js-er2-input').val(fileData.regex)
-          this.expressao1 = fileData.regex;
+          this.expressao2 = fileData.regex;
 
         }
         this.$el.find('js-lr2-upload').addClass('hidden');

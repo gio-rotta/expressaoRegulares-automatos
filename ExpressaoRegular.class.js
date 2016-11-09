@@ -14,6 +14,13 @@ function ExpressaoRegular () {
         return this.verificadorParenteses(expressao);
 	};
 
+    this.inserirConcatenacao = function(str) {
+        var expressao = str.replace(/([a-z0-9*?)](?!$|[)*?|]))/g,'$1.');
+        expressao = expressao.replace(/([a-z0-9]\*)/g,'($1)');
+        expressao = expressao.replace(/([a-z0-9]\?)/g,'($1)');
+        return expressao;
+    }
+
 	this.verificadorParenteses = function(str){
 		var counter = 0;
 
