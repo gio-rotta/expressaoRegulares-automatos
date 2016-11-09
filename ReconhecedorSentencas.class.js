@@ -54,18 +54,20 @@ function ReconhecedorSentencas () {
                 var state = Object.keys(current[k])[0];
 
                 for (var j = 0; j < automato.alfabeto.length; j++) {
-                    var nextState = automato.estados[state].transicoes[automato.alfabeto[j]];
+                    if (state && state != 'false') {
+                        var nextState = automato.estados[state].transicoes[automato.alfabeto[j]];
 
-                    if(nextState) {
-                        var transition = {};
-                        transition[nextState] = {'string': ''};
-                        transition[nextState]['string'] = current[k][state].string + automato.alfabeto[j];
-                        next.push(transition);
+                        if(nextState) {
+                            var transition = {};
+                            transition[nextState] = {'string': ''};
+                            transition[nextState]['string'] = current[k][state].string + automato.alfabeto[j];
+                            next.push(transition);
+                        }
                     }
                 }
             }
 
-            strings.push(next)
+            if (state) strings.push(next)
         }
 
         for (var i = 0; i < strings[n].length; i++) {
