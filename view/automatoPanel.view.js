@@ -47,8 +47,8 @@ var AutomatoPanelView = Backbone.View.extend({
 
   determinizarAutomato: function(event) {
     var determinizadorAutomato = new Determinizacao(this.automato.estados, this.automato.alfabeto);
-    var estados = determinizadorAutomato.determinizarAutomato();
-    this.automato = {estados:estados, alfabeto:this.automato.alfabeto, elGrafo:'grafo-automato-2'};
+    var automato = determinizadorAutomato.determinizarAutomato();
+    this.automato = {estados:automato.estados, alfabeto:automato.alfabeto, elGrafo:'grafo-automato-2'};
     this.automatoView = new AutomatoView(this.automato);
     this.automatoView.gerarTabelaDinamica();
     this.$el.find('.panel-automato').html(this.automatoView.el);
