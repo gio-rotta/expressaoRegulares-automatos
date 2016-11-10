@@ -55,7 +55,8 @@ function ExpressaoRegular () {
                     break;
                 case '*':
                 case '?':
-                    stack.push(str[i]);
+                    // stack.push(str[i]);
+                    aux = aux + str[i];
                     break;
                 case '|':
                 case '.':

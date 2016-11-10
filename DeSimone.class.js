@@ -181,8 +181,7 @@ function DeSimone (expressao) {
             var composition = states[i].composition;
             var isEqual = true;
 
-            if (!(composition.hasOwnProperty('L') && newComposition.hasOwnProperty('L'))
-                && !(!composition.hasOwnProperty('L') && !newComposition.hasOwnProperty('L'))) {
+            if ((composition.hasOwnProperty('L') && !newComposition.hasOwnProperty('L')) || (!composition.hasOwnProperty('L') && newComposition.hasOwnProperty('L'))) {
                 continue;
             }
 
