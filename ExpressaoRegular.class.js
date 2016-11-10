@@ -50,13 +50,18 @@ function ExpressaoRegular () {
                         aux = aux + stack.pop();
                     }
 
+                    if ((i + 1) < str.length && (str[i + 1] === '*' || str[i + 1] === '?')) {
+                        aux = aux + str[i + 1];
+                        i++;
+                    }
+
                     counter -= 1;
                     stack.pop();
                     break;
                 case '*':
                 case '?':
-                    // stack.push(str[i]);
-                    aux = aux + str[i];
+                    stack.push(str[i]);
+                    // aux = aux + str[i];
                     break;
                 case '|':
                 case '.':
