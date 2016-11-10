@@ -199,7 +199,9 @@ function Determinizacao(estados, alfabeto) {
 						if (transicao) {
 							for (var simboloIndex in this._alfabeto) {
 								var simbolo = this._alfabeto[simboloIndex];
-								this._estados[transicao].transicoes[simbolo] = _.union(this._estados[transicao].transicoes[simbolo], estado.transicoes[simbolo]);
+								if (this._estados[transicao].transicoes[simbolo]) {
+									estado.transicoes[simbolo] = _.union(this._estados[transicao].transicoes[simbolo], estado.transicoes[simbolo]);
+								}
 							}
 						}
 
