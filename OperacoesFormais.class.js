@@ -1,5 +1,20 @@
+/**
+ * Esta classe é responsável por duas operações que serão usadas para a realização de duas operações que serão 
+ * usadas para determinar a intersecção de autômatos, assim como equivalência.
+ */
 function OperacoesFormais () {
 
+	/**
+	 * @author: Giovanni Rotta
+	 * Este método é responsável pela realização do complemento de um autômato, recebido por parâmetro, 
+	 * para isso ele utiliza a classe Determinização para determinar o autômato caso necessário, e também a
+	 * class Minimização para eliminar indefinições (deixar o autômato completo). Após a realização destas duas
+	 * operações o método simplesmente inverte os estados finais pelos estados não finais. O método retorna os novos
+	 * estados do autômato.
+	 * @param estados - objeto correspondente aos estados de um autômato e suas transições
+ 	 * @param alfabeto - lista de simbolos do alfabeto de um autômato
+ 	 * @return estados - objeto correspondente aos estados de um autômato e suas transições
+	 */
 	this.complemento = function(estados, alfabeto) {
 
 		// verificar determinismo e determinizar
@@ -29,6 +44,19 @@ function OperacoesFormais () {
     	return estados
 	}
 
+	/**
+	 * @author: Giovanni Rotta
+	 * Este método recebe por parâmetro os dois estados que irá realizar a união, primeiro ele renomeia os estados de ambos
+	 * autômatos em uma sequência numérica, para evitar estados com nomes iguais, após este passo ele junta ambos estados em
+	 * um mesmo objeto. O terceiro passo do algoritmo é inserir um novo estado inicial, cuja transição será as mesmas dos
+	 * estados iniciais antigos, estes por sua vez, deixam de ser iniciais, caso um deles seja também final, o novo estado
+	 * inicial também passa a ser final. O método retorna os novos estados do autômato, assim como o alfabeto.
+	 * @param estados1 - objeto correspondente aos estados de um autômato e suas transições
+ 	 * @param alfabeto1 - lista de simbolos do alfabeto de um autômato
+ 	 * @param estados2 - objeto correspondente aos estados de um autômato e suas transições
+ 	 * @param alfabeto2 - lista de simbolos do alfabeto de um autômato
+ 	 * @return Objeto Autômato
+	 */
 	this.uniao = function(estados1, alfabeto1, estados2, alfabeto2) {
 		var index = 1;
 		var novoEstados1 = {};

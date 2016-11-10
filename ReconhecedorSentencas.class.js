@@ -1,5 +1,22 @@
+/**
+ * Esta classe envolve duas operações, o reconhecedor de sentenças e o gerador de sentenças, ambos precisam 
+ * de um autômato finito para a execução.
+ */
 function ReconhecedorSentencas () {
 
+    /**
+     * @author: Giovanni Rotta
+     * Este método recebe como parâmetro o autômato finito, além da sentença a ser reconhecida, primeiro ele verifica se
+     * o autômato é determinístico, e no caso negativo ele realiza a determinização com a ajuda da classe Determinizacao,
+     * após a realização deste passo, o algoritmo transforma a sentença em um array de caracteres, o último passo é transformar
+     * o autômato em uma máquina de estados que sofre uma iteração a cada caracter da lista, mudando o estado atual para o estado
+     * resultante da transição, se no final das iterações o estado atual for um estado final, então o método retorna true,
+     * caso contrário, retorna false.
+     * @param estados - objeto correspondente aos estados de um autômato e suas transições
+     * @param alfabeto - lista de simbolos do alfabeto de um autômato
+     * @param sentença - sentenca a ser verificada
+     * @return bool;
+     */
 	this.verificarSentenca = function(estados, alfabeto, sentenca) {
 
 		// verificar determinismo e determinizar
@@ -44,6 +61,18 @@ function ReconhecedorSentencas () {
         }
 	}
 
+    /**
+     * @author: Guilherme Nakayama
+     * Este método foi implementado seguindo um estilo de algoritmo tipo busca em largura de grafos, dado o estado inicial 
+     * do Autômato Finito, e o tamanho das sentenças a serem geradas, a função lista todas as transições possíveis a partir
+     * do estado inicial, gerando os próximos estados alcançados, a partir de cada novo estado gerado se repete o processo,
+     * gerando novos estados, até chegarmos a n transições que equivalem a todas a possíveis sentenças de tamanho n, note que
+     * ao final do algoritmo é necessário checar se o estado alcançado pelo algoritmo é um estado final, só assim a sentença
+     * de tamanho n pode ser aceita.
+     * @param n - inteiro que representa tamanho das sentenças a serem geredas
+     * @param automato - objeto autômato
+     * @return lista de possíveis sentenças;
+     */
 	this.gerarSentencas = function (n, automato) {
 	    var strings = [[{'q0': {'string': ''}}]];
         var ret = [];
