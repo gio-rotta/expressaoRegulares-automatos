@@ -99,8 +99,14 @@ function ExpressaoRegular () {
                     // aux = aux + str[i];
                     break;
                 case '|':
-                case '.':
                     if (stack.length > 0 && counter === 0) {
+                        aux = aux + stack.pop();
+                    }
+
+                    stack.push(str[i]);
+                    break;
+                case '.':
+                    if (stack.length > 0 && counter === 0 && (stack[stack.length - 1] != '|')) {
                         aux = aux + stack.pop();
                     }
 
