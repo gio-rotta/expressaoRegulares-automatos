@@ -125,6 +125,11 @@ function DeSimone (expressao) {
                                         composition['L'] = true;
                                     } else {
                                         next = this._getNextUp(next);
+
+                                        if(next == -1) {
+                                            endLoop = true;
+                                            composition['L'] = true;
+                                        }
                                     }
 
                                 }
