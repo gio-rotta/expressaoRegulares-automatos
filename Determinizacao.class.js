@@ -80,8 +80,8 @@ function Determinizacao(estados, alfabeto) {
 						var transicoes = estados[estado].transicoes[terminal];
 
 						for (var transicaoIndex in transicoes) {
-						 	if (!transicoes[transicaoIndex] || transicoes[transicaoIndex] == null) {
-						 		delete transicoes[transicaoIndex];
+						 	if (!transicoes[transicaoIndex] || transicoes[transicaoIndex] == null || transicoes[transicaoIndex] == undefined) {
+						 		transicoes.splice(transicaoIndex, 1);
 							}
 						}
 
@@ -89,7 +89,7 @@ function Determinizacao(estados, alfabeto) {
 							estados[estado].transicoes[terminal] = [];
 						}
 
-						if (!(transicoes[0] == null)) {
+						if (transicoes.length > 0 && !(transicoes[0] == null)) {
 						
 							if (!listaTransicoes[terminal]) {
 								listaTransicoes[terminal] = [];
@@ -111,6 +111,7 @@ function Determinizacao(estados, alfabeto) {
 				}
 
 				if (listaTransicoes[terminal]) {
+					console.log(listaTransicoes[terminal])
 					novosEstados[nomeEstado].transicoes[terminal] = []
 					novosEstados[nomeEstado].transicoes[terminal][0] = JSON.stringify(listaTransicoes[terminal]);
 				} else {
