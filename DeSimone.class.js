@@ -3,6 +3,13 @@ function DeSimone (expressao) {
     this._expressao = expressao.replace(/\*\*[*]*/g, '*');
     this._alfabeto = [];
 
+    /**
+     * @author: Guilherme Nakayama
+     * Constrói e retorna a árvore que será utilizada no algoritmo De Simone,
+     * a partir de uma ER em notação pós fixada. A árvore construida é apenas um array em que a posição 0 representa
+     * a raiz, e para calcular o filho da direita no nodo i, usa-se a expressão 2*i + 1, e para o filho esquerdo 2*(i +1)
+     * @return A árvore de De Simone
+     */
 	this.construirArvoreRPN = function(expressao) {
         var tree = [];
         var index = 0;
@@ -47,6 +54,11 @@ function DeSimone (expressao) {
         return tree;
     };
 
+    /**
+     * @author: Guilherme Nakayama
+     * Cria e retorna a estrutura que representa a composição inicial de um estado a ser analisado pelo algoritmo De Simone.
+     * @return Composição incial
+     */
     this._initComposition = function() {
         var newComposition = {};
 
@@ -57,6 +69,13 @@ function DeSimone (expressao) {
         return newComposition;
     };
 
+    /**
+     * @author: Guilherme Nakayama
+     * Calcula o próximo nodo a ser lido de um movimento de subida,
+     * por exemplo, caso o índice passado seja de um nodo do tipo concatenação,
+     * a função retorna o filho da direita deste nodo.
+     * @return Posição na �rvore do pr�ximo nodo ap�s uma s�bida
+     */
     this._getNextUp = function(index) {
         switch (this._treeRPN[index]) {
             case '*':
@@ -76,6 +95,12 @@ function DeSimone (expressao) {
         }
     };
 
+    /**
+     * @author: Guilherme Nakayama
+     * Efetua a rotina de descida a partir do índice do nodo passado, e modifica o objeto composição de acordo com as
+     * folhas encontradas na rotina de descida.
+     * @return Retorna a nova composição.
+     */
     this._getCompositionDown = function(start, newComposition) {
         var endLoop = false;
         var next = start;
@@ -153,6 +178,12 @@ function DeSimone (expressao) {
         return composition;
     };
 
+    /**
+     * @author: Guilherme Nakayama
+     * Calcula a costura de um nodo filho a direita, segue a lógica de que a costura de um nodo filho da direita
+     * sempre será o pai do primeiro nodo antecessor que é filho da esquerda, caso não exista, a costura vai para lambda.
+     * @return Posição na �rvore do pr�ximo nodo ap�s uma s�bida  de um nodo a direita
+     * */
     this._getNextRight = function (index) {
         var parent = Math.floor((index - 1)/2);
 
@@ -164,6 +195,11 @@ function DeSimone (expressao) {
         return Math.floor((parent - 1)/2);
     };
 
+    /**
+     * @author: Guilherme Nakayama
+     * Calcula a subida a partir de um nodo folha, e aplica a rotina de descida no nodo da costura do nodo folha.
+     * @return Retorna a nova composição.
+     */
     this._getCompositionUp = function(start, newComposition) {
         var next = this._getNextUp(start%2 === 0 ? this._getNextRight(start) : Math.floor((start - 1)/2));
         var composition = newComposition ? newComposition : this._initComposition();
@@ -176,6 +212,12 @@ function DeSimone (expressao) {
         return this._getCompositionDown(next, composition);
     };
 
+    /**
+     * @author: Guilherme Nakayama
+     * Calcula se a nova composição gerada é equivalente a algum estado já gerado pelo algoritmo, caso seja,
+     * retorna o estado equivalente, caso contrário retorna null.
+     * @return O nome do estado equivalente ou null
+     */
     this._findEquivalent = function(states, newComposition) {
         for (var i = 0; i < states.length; i++) {
             var composition = states[i].composition;
@@ -222,6 +264,13 @@ function DeSimone (expressao) {
         return undefined;
     };
 
+    /**
+     * @author: Guilherme Nakayama
+     * Gera os estados do autômato finito equivalente à ER em notação pós-fixada, recebe os estados gerados até o momento,
+     * o índice do estado a ser analisado, e o índice do último estado gerado ainda não analisado,
+     * caso novos estado sejam gerados a partir do estado analisado, de forma recursiva chama  mesma função para os novos estado gerados.
+     * @return O array de estados gerados at� o momento.
+     */
     this._gerarEstadosRPN = function (states, start, end) {
         var created = 0;
 
@@ -263,6 +312,11 @@ function DeSimone (expressao) {
         return states;
     };
 
+    /**
+     * @author: Guilherme Nakayama
+     * Converte os estados do autômato gerado, para a formatação usada na representação gráfica do autômato.
+     * @return Estados convertidos
+     */
     this._convert = function (states) {
         var r = {};
 
@@ -285,6 +339,12 @@ function DeSimone (expressao) {
         return r
     };
 
+    /**
+     * @author: Guilherme Nakayama
+     * Método público que inicia o algoritmo de De Simone, faz a primeira rotina de descida a partir do nodo raiz,
+     * e chama o método _geraEstadosRPN(), para o resultado do estado inicial q0 obtido.
+     * * @return Estados do AF
+     */
     this.gerarEstadosRPN = function() {
         var states = [{
             'name': 'q0',
