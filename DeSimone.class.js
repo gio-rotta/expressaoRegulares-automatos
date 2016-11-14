@@ -169,7 +169,9 @@ function DeSimone (expressao) {
 					}else{
 						next = aux;
 					}
-                                }
+                                } else if ((waiting.indexOf(next) >= 0 && (this._treeRPN[next] == '*' || this._treeRPN[next] == '?'))) {
+					next = aux;
+				}
                             }
                         } else {
                             next = 2 * (next + 1);
