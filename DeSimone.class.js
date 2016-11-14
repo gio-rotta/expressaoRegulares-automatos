@@ -126,6 +126,7 @@ function DeSimone (expressao) {
                     break;
                 default:
                     var leaf = this._treeRPN[next];
+		    var aux = next;
 
                     if (composition[leaf[leaf.length - 1]].indexOf(leaf) < 0) {
                         composition[leaf[leaf.length - 1]].push(leaf);
@@ -163,7 +164,11 @@ function DeSimone (expressao) {
 
                                 if (next === -1) {
                                     composition['L'] = true;
-                                    endLoop = true;
+					if(waiting.length === 0) {
+                                    		endLoop = true;
+					}else{
+						next = aux;
+					}
                                 }
                             }
                         } else {
