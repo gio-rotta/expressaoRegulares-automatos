@@ -71,15 +71,11 @@ var SentencaPanelView = Backbone.View.extend({
   },
 
   gerarSentencas: function() {
-    if (!this.automato) {
       if (this.expressao) {
         this.automato = this.executarDeSimone(this.expressao);
       } else {
         alert('Insira uma representação para a linguagem regular 1!');
       }
-    }
-
-    console.log(this.automato)
 
     var listaSentencas = this.reconhecedorSentencas.gerarSentencas(this.$('.js-n-sentencas').val(), this.automato);
     listaSentencas = listaSentencas.map(function (current) {

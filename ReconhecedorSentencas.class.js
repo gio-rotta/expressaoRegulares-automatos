@@ -77,6 +77,11 @@ function ReconhecedorSentencas () {
 	    var strings = [[{'q0': {'string': ''}}]];
         var ret = [];
 
+		if(+n === 0 && automato.estados['q0'].final) {
+			ret.push('&');
+			return ret;
+		}
+
 	    for (var i = 0; i < n; i++) {
             var current = strings[i];
             var next = [];
